@@ -1,0 +1,177 @@
+/**
+* Verifone e-commerce PrestaShop Module
+*
+* Feel free to contact Verifone e-commerce at support@paybox.com for any
+* question.
+*
+* LICENSE: This source file is subject to the version 3.0 of the Open
+* Software License (OSL-3.0) that is available through the world-wide-web
+* at the following URI: http://opensource.org/licenses/OSL-3.0. If
+* you did not receive a copy of the OSL-3.0 license and are unable 
+* to obtain it through the web, please send a note to
+* support@paybox.com so we can mail you a copy immediately.
+*
+*  @category  Module / payments_gateways
+*  @version   2.0.0
+*  @author    BM Services <contact@bm-services.com>
+*  @copyright 2012-2017 Verifone e-commerce
+*  @license   http://opensource.org/licenses/OSL-3.0
+*  @link      http://www.paybox.com/
+ **/
+
+.pbx_pres {
+	color: #707173;
+}
+
+.pbx_bloc {
+	border: dashed 1px #0066A1;
+	margin: 6px;
+	padding: 10px;
+}
+
+.pbx_pres h2 {
+	color: #df0023;
+	margin-top: 0px;	
+}
+.pbx_pres h4{
+	font-size: 18px;
+	color: #DB3484;
+}
+.pbx_pres strong, .pbx_pres strong a {
+	color: #0066A1;
+}
+
+.pbx_pres ol {
+	list-style: decimal;
+}
+
+.pbx_pres ul, .pbx_method ul {
+	list-style: disc;
+}
+
+.pbx_pres ol, .pbx_pres ul, .pbx_method ul {
+	padding-left: 25px;
+}
+
+.pbx_pres .pbx_offers {
+	width: 75%;
+	margin: auto;
+	border-collapse: separate;
+	border-spacing: 2px;
+}
+
+.pbx_pres .pbx_offers thead th{
+	background: #8bc954;
+	font-weight: bold;
+	color: white;
+	text-align: center;
+}
+
+.pbx_pres .pbx_offers thead th.pbx_pack {
+	width: 23%;
+}
+
+.pbx_pres .pbx_offers td, .pbx_pres .pbx_offers th {
+	padding: 4px;
+}
+
+.pbx_pres .pbx_offers td.pbx_check {
+	text-align: center;
+	color: #DB3484;
+}
+
+.pbx_pres .pbx_offers td.pbx_nocheck {
+	text-align: center;
+}
+
+.pbx_pres .pbx_offers td.pbx_optioncheck {
+	text-align: center;
+	font-weight: bold;
+	font-style: italic;
+}
+
+.pbx_pres .pbx_offers tr.pbx_odd {
+	background-color: #f8f8f8;
+}
+
+.pbx_pres .pbx_offers tr.pbx_even {
+	background-color: #ededed;
+}
+
+.pbx_clear {
+	clear: both;
+}
+
+#content.bootstrap .pbx_panel {
+	background: #ebedf4;
+}
+
+.pbx_method {
+	width: 260px;
+	height: 218px;
+	float: left;
+	border: 1px solid gray;
+	margin: 0 0 8px 20px;
+	padding: 8px;
+}
+
+.pbx_method .pbx_img {
+	float: left;
+	width: 26%;
+	text-align: center;
+}
+
+.pbx_method .pbx_label, .pbx_method .pbx_active {
+	float: right;
+	width: 72%;
+	margin-bottom: 3px;
+}
+
+.pbx_method .pbx_active, .pbx_method .pbx_active label {
+	text-align: center;
+}
+
+.pbx_method .pbx_active label {
+	float: none;
+}
+
+.pbx_method label {
+	font-weight: normal;
+	margin: 0;
+	width: auto;
+}
+
+.pbx_method .pbx_label input {
+	width: 95%;
+}
+
+.pbx_method .pbx_details {
+	clear: right;
+	float: right;
+	width: 68%;
+	height: 100px;
+}
+
+.pbx_method .pbx_action {
+	clear: both;
+	text-align: right;
+	margin-top: 3px;
+}
+
+.pbx_links {
+	margin-bottom: 12px;
+	margin-top: -6px;
+}
+
+.pbx_method_add {
+	position: relative;
+	height: 0;
+	overflow: visible;
+	text-align: right;
+	top: -40px;
+}
+
+#pbx_method_add_panel {
+	border: solid 1px #e6e6e6;
+	padding: 8px;
+}

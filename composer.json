@@ -1,0 +1,13 @@
+{
+  "name": "verifone/prestashop",
+  "description": "Verifone e-commerce - PrestaShop integration module",
+  "homepage": "https://github.com/PayboxByVerifone/PrestaShop",
+  "license": "AFL - Academic Free License (AFL 3.0)",
+  "require": {
+    "php": ">=5.4.0"
+  },
+  "config": {
+    "preferred-install": "dist"
+  },
+  "type": "prestashop-module"
+}

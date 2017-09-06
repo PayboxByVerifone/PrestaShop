@@ -1,0 +1,110 @@
+/**
+* Verifone e-commerce PrestaShop Module
+*
+* Feel free to contact Verifone e-commerce at support@paybox.com for any
+* question.
+*
+* LICENSE: This source file is subject to the version 3.0 of the Open
+* Software License (OSL-3.0) that is available through the world-wide-web
+* at the following URI: http://opensource.org/licenses/OSL-3.0. If
+* you did not receive a copy of the OSL-3.0 license and are unable 
+* to obtain it through the web, please send a note to
+* support@paybox.com so we can mail you a copy immediately.
+*
+*  @category  Module / payments_gateways
+*  @version   2.0.0
+*  @author    BM Services <contact@bm-services.com>
+*  @copyright 2012-2017 Verifone e-commerce
+*  @license   http://opensource.org/licenses/OSL-3.0
+*  @link      http://www.paybox.com/
+ **/
+
+.pbx_pres .row {
+	clear: both;
+}
+
+.pbx_pres .col-lg-6, .pbx_pres .col-sm-6 {
+	float: left;
+	width: 50%;
+}
+
+.pbx_logo .col-lg-2 {
+	width: 16%;
+}
+
+.pbx_pres .img-responsive, .pbx_method .img-responsive, .pbx_logo .img-responsive {
+	max-width: 100%;
+	display: block;
+	height: auto;
+}
+
+.pbx_pres .text-center {
+	text-align: center;
+}
+
+.pbx_right {
+	float: right;
+	width: 47%;
+	position: relative;
+}
+
+.pbx_left {
+	float: left;
+	text-align: justify;
+	margin-top: 3px;
+	width: 47%;
+}
+
+.pbx_news {
+	width: 40%;
+	padding: 8px;
+	right: -5px;
+	top: 60px;
+	position: absolute;
+	border: dashed 1px #0066A1;
+}
+
+.pbx_question {
+	width: 50%;
+	border: dashed 1px #0066A1;
+	padding: 8px;
+	margin-left: 12px;
+}
+
+.pbx_subscribe {
+	width: 90%;
+	padding: 8px;
+	margin-left: 12px;
+	margin-top: 15px;
+}
+
+.pbx_details {
+	width: 90%;
+	padding: 8px;
+	margin-left: 12px;
+}
+
+.pbx_method {
+	height: 202px;
+}
+
+.pbx_method_add {
+	top: -20px;
+}
+
+#pbx_method_add_panel {
+	border: solid 1px #CCCED7;
+}
+
+#pbx_method_add_panel h4 {
+	margin-top: 0;
+}
+
+#pbx_method_add_panel .col-md-6 {
+		float: left;
+	width: 48%;
+}
+
+#pbx_method_add_panel .row {
+	clear: both;
+}
