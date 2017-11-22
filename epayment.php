@@ -462,7 +462,7 @@ class Epayment extends PaymentModule
     {
         if (_PS_VERSION_ < '1.4') {
             $this->context->smarty->currentTemplate = $name;
-        } else if (_PS_VERSION_ < '1.5') {
+        } elseif (_PS_VERSION_ < '1.5') {
             $views = 'views/templates/';
             if (@filemtime(dirname(__FILE__) . '/' . $name)) {
                 return $this->display(__FILE__, $name);
@@ -1048,9 +1048,7 @@ class Epayment extends PaymentModule
             );
 
             Mail::Send(intval($order->id_lang), 'payment_recurring', $title, $varsTpl, $customer->email, $customerName, null, null, null, null, dirname(__FILE__) . '/mails/');
-        }
-
-        // Other payments
+        } // Other payments
         else {
             $order = new Order($orderId);
             $details = $this->getHelper()->getOrderRecurringDetails($orderId);

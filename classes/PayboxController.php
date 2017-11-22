@@ -200,7 +200,6 @@ class PayboxController extends PayboxAbstract
             $this->context->currency = new Currency($id_currency, null, $this->context->shop->id);
 
             if (in_array($params['error'], array('00000', '00200', '00201', '00300', '00301', '00302', '00303'))) {
-
                 if ($this->getHelper()->hasCartLocker($cart->id, $params['transaction'])) {
                     $message = sprintf('Cart %d: (IPN) Cart already being validated as order with the transaction %s.', $cart->id, $params['transaction']);
                     $this->logDebug($message);
@@ -230,7 +229,6 @@ class PayboxController extends PayboxAbstract
                         $message = sprintf('Cart %d: (IPN) "CartLocker" creation failed, cart probably already being validated as order.', $cart->id);
                         $this->logDebug($message);
                     }
-
                 }
             } else {
                 // Payment refused

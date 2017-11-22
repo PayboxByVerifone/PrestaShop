@@ -191,8 +191,7 @@ class PayboxInstaller
      */
     public function installPayboxOrderStates($module)
     {
-        if (!$this->_isValidState(Configuration::get('PAYBOX_ID_ORDER_STATE_NX')))
-        {
+        if (!$this->_isValidState(Configuration::get('PAYBOX_ID_ORDER_STATE_NX'))) {
             $orderState = new OrderState();
             $orderState->name = array();
             foreach (Language::getLanguages() as $language) {
@@ -800,7 +799,8 @@ class PayboxInstaller
         return ($result !== false);
     }
 
-    private function configurationToKeep() {
+    private function configurationToKeep()
+    {
         return array(
             'PAYBOX_ID_ORDER_STATE_NX',
             'PAYBOX_MIDDLE_STATE_NX',

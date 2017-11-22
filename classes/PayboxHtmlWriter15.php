@@ -157,8 +157,11 @@ class PayboxHtmlWriter extends PayboxHtmlWriterAbstract
     public function formFile($name, $label, $description = null, $show = true)
     {
         $this->formElementStart($name, $label, $show);
-        $this->html(sprintf('<input type="file" id="%s" name="%s"/>',
-            $this->escape($name), $this->escape($name)));
+        $this->html(sprintf(
+            '<input type="file" id="%s" name="%s"/>',
+            $this->escape($name),
+            $this->escape($name)
+        ));
         $this->formDescription($description);
         $this->formElementEnd();
     }

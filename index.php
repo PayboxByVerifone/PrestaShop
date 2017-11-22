@@ -75,8 +75,7 @@ try {
         default:
             $c->defaultAction();
     }
-}
-catch (Exception $e) {
+} catch (Exception $e) {
     header('Status: 500 Error', true, 500);
     echo $e->getMessage();
 }

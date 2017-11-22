@@ -58,10 +58,10 @@ class PayboxAdminOrder extends PayboxAbstractAdmin
         // Payment mean
         $img = $this->getModule()->getMethodImageUrl(strtoupper($details['carte']));
         $text = sprintf('<img style="vertical-align:middle;" src="%s" />', $img);
-        if(isset($details['method']) && 'WALLET' == $details['method']) {
+        if (isset($details['method']) && 'WALLET' == $details['method']) {
             $img = $this->getModule()->getMethodImageUrl('PAYLIB');
             $text = sprintf('<img style="vertical-align:middle;" src="%s" />', $img).$text;
-		}
+        }
         $w->html(sprintf(
             $tpl,
             $this->l('Payment Method:'),
@@ -402,19 +402,19 @@ EOF;
 
 
                 // Refund all amount
-                $w->html('<p class="left">');
-                $w->html(sprintf(
-                    '<form id="paybox_refund_all" method="post" action="%s">',
-                    $w->escape($_SERVER['REQUEST_URI'])
-                ));
-                $w->html(sprintf(
-                    '<input type="hidden" name="id_order" value="%d" />',
-                    $details['id_order']
-                ));
-                $w->html('<input type="hidden" name="order_action" value="refund_all" />');
-                $w->button($this->l('Refund total transaction'), 'submit');
-                $w->html('</form>');
-                $w->html('</p>');
+                    $w->html('<p class="left">');
+                    $w->html(sprintf(
+                        '<form id="paybox_refund_all" method="post" action="%s">',
+                        $w->escape($_SERVER['REQUEST_URI'])
+                    ));
+                    $w->html(sprintf(
+                        '<input type="hidden" name="id_order" value="%d" />',
+                        $details['id_order']
+                    ));
+                    $w->html('<input type="hidden" name="order_action" value="refund_all" />');
+                    $w->button($this->l('Refund total transaction'), 'submit');
+                    $w->html('</form>');
+                    $w->html('</p>');
 
 /*
                 // Refund item(s)
@@ -430,29 +430,29 @@ EOF;
                 }
 */
                 // Refund amount
-                $w->html('<p class="left">');
-                $w->html('<form id="paybox_refund_amount">');
-                $w->button($this->l('Refund of an amount'), 'submit');
-                $w->html('</form>');
-                $w->html('</p>');
+                    $w->html('<p class="left">');
+                    $w->html('<form id="paybox_refund_amount">');
+                    $w->button($this->l('Refund of an amount'), 'submit');
+                    $w->html('</form>');
+                    $w->html('</p>');
 
                 // Refund amount form
-                $w->html('<p class="left">');
-                $w->html(sprintf(
-                    '<form id="paybox_refund_amount_input" method="post" action="%s" style="display:none;">',
-                    $w->escape($_SERVER['REQUEST_URI'])
-                ));
-                $w->html(sprintf(
-                    '<input type="hidden" name="id_order" value="%d" />',
-                    $details['id_order']
-                ));
-                $w->html('<input type="hidden" name="order_action" value="refund_amount" />');
-                $w->html('<input type="text" name="amountRefund" value="" /> ');
-                $w->button($this->l('Refund this amount'), 'submit');
-                $w->html('</form>');
-                $w->html('</p>');
+                    $w->html('<p class="left">');
+                    $w->html(sprintf(
+                        '<form id="paybox_refund_amount_input" method="post" action="%s" style="display:none;">',
+                        $w->escape($_SERVER['REQUEST_URI'])
+                    ));
+                    $w->html(sprintf(
+                        '<input type="hidden" name="id_order" value="%d" />',
+                        $details['id_order']
+                    ));
+                    $w->html('<input type="hidden" name="order_action" value="refund_amount" />');
+                    $w->html('<input type="text" name="amountRefund" value="" /> ');
+                    $w->button($this->l('Refund this amount'), 'submit');
+                    $w->html('</form>');
+                    $w->html('</p>');
 
-                $js = <<<EOF
+                    $js = <<<EOF
 (function($) {
     $(document).ready(function() {
         $('#paybox_refund_all, #paybox_refund_amount_input').submit(function() {
@@ -463,15 +463,15 @@ EOF;
             return false;
         });
 EOF;
-                if (Configuration::get('PS_ORDER_RETURN')) {
-                    $js .= <<<EOF
+                    if (Configuration::get('PS_ORDER_RETURN')) {
+                        $js .= <<<EOF
         $('#paybox_refund_item').submit(function() {
             $('#desc-order-standard_refund').click();
             return false;
         });
 EOF;
-                }
-                $js .= <<<EOF
+                    }
+                    $js .= <<<EOF
         $('#paybox_refund_amount').submit(function() {
             $('#paybox_refund_amount_input').show('normal');
             return false;
@@ -479,7 +479,7 @@ EOF;
     });
 })(jQuery);
 EOF;
-                $w->js(sprintf($js, json_encode($this->l('Are you sure?'))));
+                    $w->js(sprintf($js, json_encode($this->l('Are you sure?'))));
             }
         }
     }
@@ -497,19 +497,13 @@ EOF;
         // For Kwixo payment
         if (in_array($details['carte'], array('STANDARD', '1XRNP', 'CREDIT'))) {
             $this->_writeKwixoDetails($w, $details);
-        }
-
-        // Can be refunded?
+        } // Can be refunded?
         elseif ($this->getHelper()->canRefund($orderId) && 'PREPAYEE' != $details['method']) {
             $this->_writeRefundableDetails($w, $details);
-        }
-
-        // Waiting for capture?
+        } // Waiting for capture?
         elseif ($this->getHelper()->canCapture($orderId)) {
             $this->_writeCapturableDetails($w, $details);
-        }
-
-        // All other cases
+        } // All other cases
         else {
             $this->_writeDetails($w, $details);
         }

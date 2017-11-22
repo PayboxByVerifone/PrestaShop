@@ -8,7 +8,7 @@
 * LICENSE: This source file is subject to the version 3.0 of the Open
 * Software License (OSL-3.0) that is available through the world-wide-web
 * at the following URI: http://opensource.org/licenses/OSL-3.0. If
-* you did not receive a copy of the OSL-3.0 license and are unable 
+* you did not receive a copy of the OSL-3.0 license and are unable
 * to obtain it through the web, please send a note to
 * support@paybox.com so we can mail you a copy immediately.
 *
@@ -194,7 +194,7 @@ class PayboxKwixo
         $text = preg_replace('#^[^0-9]+$#', '', $text);
         if (preg_match('#^33[1-9][0-9]{8}$#', $text, $matches)) {
             return '+'.$text;
-        } else if (preg_match('#^0[1-9][0-9]{8}$#', $text, $matches)) {
+        } elseif (preg_match('#^0[1-9][0-9]{8}$#', $text, $matches)) {
             return $text;
         }
         throw new Exception('Invalid phone number "'.$text.'"');

@@ -19,36 +19,36 @@
 *  @link      http://www.paybox.com/
 */
 
-$(document).ready(function()
-{
-	if (refundAvailable == 1) {
-		payboxCreateCreditSlip();
+$(document).ready(function () {
 
-		$('#generateDiscount').on('click', function() {
-			payboxToggleCreditSlip();
-		});
-		$('#generateCreditSlip').on('click', function() {
-			payboxToggleCreditSlip();
-		});
-	}
+    if (refundAvailable == 1) {
+        payboxCreateCreditSlip();
 
-	/**
-	 * Intercept Ajax calls for page reload on product modification or deletion
-	 */
-	$(document).ajaxSuccess(function(event, xhr, settings, data) {
-		if (typeof data !== 'undefined' && data !== null) {
-			if (typeof data.documents_html !== 'undefined' && data.documents_html !== null) {
-				window.location.reload(true);
-			}
-		}
-	});
+        $('#generateDiscount').on('click', function () {
+            payboxToggleCreditSlip();
+        });
+        $('#generateCreditSlip').on('click', function () {
+            payboxToggleCreditSlip();
+        });
+    }
+
+    /**
+     * Intercept Ajax calls for page reload on product modification or deletion
+     */
+    $(document).ajaxSuccess(function (event, xhr, settings, data) {
+        if (typeof data !== 'undefined' && data !== null) {
+            if (typeof data.documents_html !== 'undefined' && data.documents_html !== null) {
+                window.location.reload(true);
+            }
+        }
+    });
 
 
-	if ($('.alert-epayment').length) {
-		$('html, body').animate({
-			scrollTop: ($('.alert-epayment').offset().top - 150)
-		}, 2000);
-	}
+    if ($('.alert-epayment').length) {
+        $('html, body').animate({
+            scrollTop: ($('.alert-epayment').offset().top - 150)
+        }, 2000);
+    }
 });
 
 /**
@@ -56,15 +56,15 @@ $(document).ready(function()
  */
 function payboxCreateCreditSlip()
 {
-	html =
-		'<p class="checkbox" id="payboxRefundSpan" style="display: none;">'+
-			'<label for="payboxRefund">'+
-				'<input type="checkbox" id="payboxRefund" name="payboxRefund" />'+
-				refundCheckboxText +
-			'</label>'+
-		'</p>';
+    html =
+        '<p class="checkbox" id="payboxRefundSpan" style="display: none;">'+
+            '<label for="payboxRefund">'+
+                '<input type="checkbox" id="payboxRefund" name="payboxRefund" />'+
+                refundCheckboxText +
+            '</label>'+
+        '</p>';
 
-	$('#spanShippingBack').after(html);
+    $('#spanShippingBack').after(html);
 
 }
 
@@ -74,14 +74,12 @@ function payboxCreateCreditSlip()
  */
 function payboxToggleCreditSlip()
 {
-	generateDiscount = $('#generateDiscount').attr("checked");
-	generateCreditSlip = $('#generateCreditSlip').attr("checked");
-	if (generateDiscount != 'checked' && generateCreditSlip == 'checked')
-	{
-		$('#payboxRefundSpan').css('display', 'block');
-	}
-	else {
-		$('#payboxRefundSpan input[type=checkbox]').attr("checked", false);
-		// $('#payboxRefundSpan').css('display', 'none');
-	}
+    generateDiscount = $('#generateDiscount').attr("checked");
+    generateCreditSlip = $('#generateCreditSlip').attr("checked");
+    if (generateDiscount != 'checked' && generateCreditSlip == 'checked') {
+        $('#payboxRefundSpan').css('display', 'block');
+    } else {
+        $('#payboxRefundSpan input[type=checkbox]').attr("checked", false);
+        // $('#payboxRefundSpan').css('display', 'none');
+    }
 }

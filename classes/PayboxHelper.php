@@ -505,7 +505,7 @@ class PayboxHelper extends PayboxAbstract
                         $delay = $this->getConfig()->getDelay();
                         if ($delay < 1) {
                             $delay = 1;
-                        } else if ($delay > 7) {
+                        } elseif ($delay > 7) {
                             $delay = 7;
                         }
                         $values['PBX_DIFF'] = sprintf('%02d', $delay);
@@ -689,7 +689,7 @@ class PayboxHelper extends PayboxAbstract
                 $response = $client->get($testUrl);
                 if (!is_array($response)) {
                     $this->logDebug(sprintf('  Invalid response type %s', gettype($response)));
-                } else if ($response['code'] != 200) {
+                } elseif ($response['code'] != 200) {
                     $this->logDebug(sprintf('  Invalid response code %s', $response['code']));
                 } else {
                     $this->logDebug(sprintf('  Valid url found: %s', $url));
@@ -886,20 +886,21 @@ class PayboxHelper extends PayboxAbstract
         // return Tools::getRemoteAddr();
         // [2.2.2] Extended test on IPN IP in internal method
         $ipAddress = '';
-        if ($_SERVER['HTTP_CLIENT_IP'])
+        if ($_SERVER['HTTP_CLIENT_IP']) {
             $ipAddress = $_SERVER['HTTP_CLIENT_IP'];
-        else if($_SERVER['HTTP_X_FORWARDED_FOR'])
+        } elseif ($_SERVER['HTTP_X_FORWARDED_FOR']) {
             $ipAddress = $_SERVER['HTTP_X_FORWARDED_FOR'];
-        else if($_SERVER['HTTP_X_FORWARDED'])
+        } elseif ($_SERVER['HTTP_X_FORWARDED']) {
             $ipAddress = $_SERVER['HTTP_X_FORWARDED'];
-        else if($_SERVER['HTTP_FORWARDED_FOR'])
+        } elseif ($_SERVER['HTTP_FORWARDED_FOR']) {
             $ipAddress = $_SERVER['HTTP_FORWARDED_FOR'];
-        else if($_SERVER['HTTP_FORWARDED'])
+        } elseif ($_SERVER['HTTP_FORWARDED']) {
             $ipAddress = $_SERVER['HTTP_FORWARDED'];
-        else if($_SERVER['REMOTE_ADDR'])
+        } elseif ($_SERVER['REMOTE_ADDR']) {
             $ipAddress = $_SERVER['REMOTE_ADDR'];
-        else
+        } else {
             $ipAddress = 'UNKNOWN';
+        }
 
         return $ipAddress;
     }
@@ -1189,7 +1190,7 @@ class PayboxHelper extends PayboxAbstract
             // Call error
             $this->logError(sprintf('Order %d: Verifone e-commerce call error', $order->id));
             return 2;
-        } else if ($response['CODEREPONSE'] != '00000') {
+        } elseif ($response['CODEREPONSE'] != '00000') {
             // Payment platform error
             $this->logError(sprintf('Order %d: Verifone e-commerce returned an error of %s', $order->id, $response['CODEREPONSE']));
             $message = $this->l('Capture operation:').chr(10).chr(13);
@@ -1275,7 +1276,7 @@ class PayboxHelper extends PayboxAbstract
             // Call error
             $this->logError(sprintf('Order %d: Verifone e-commerce call error', $order->id));
             return 2;
-        } else if ($response['CODEREPONSE'] != '00000') {
+        } elseif ($response['CODEREPONSE'] != '00000') {
             // Payment platform error
             $this->logError(sprintf('Order %d: Verifone e-commerce returned an error of %s', $order->id, $response['CODEREPONSE']));
             $message = $this->l('PaymentPlatform capture amount:').chr(10).chr(13);
@@ -1441,7 +1442,7 @@ class PayboxHelper extends PayboxAbstract
         if (empty($response)) {
             // Call error
             return 2;
-        } else if ($response['CODEREPONSE'] != '00000') {
+        } elseif ($response['CODEREPONSE'] != '00000') {
             // Payment platform error
             $message = $this->l('PaymentPlatform refund:').chr(10).chr(13);
             $message .= $this->l('Return code: error').' ['.$response['CODEREPONSE'].((!empty($response['COMMENTAIRE'])) ? ' - '.utf8_encode($response['COMMENTAIRE']) : '').']'.chr(10).chr(13);
@@ -1582,7 +1583,6 @@ class PayboxHelper extends PayboxAbstract
                 'status' => 0,
                 'error' => 'New order amount exceeding the initial amount',
             );
-
         } elseif (($amountOrder < $amountPaid) || (($amountOrder > $amountPaid) && ($amountOrder < $amountInitial)) || ('refund' == $actionType)) {
             $this->logDebug(sprintf('Cart %d: Order %d / %s', $order->id_cart, $order->id, 'Order amount changed : '.$amountPaid.' => '.$amountOrder));
 
@@ -1596,8 +1596,7 @@ class PayboxHelper extends PayboxAbstract
                 if ($amountOrder < $amountPaid) {
                     $operationAmount = ($amountPaid - $amountOrder) * -1;
                     $this->logDebug(sprintf('Cart %d: Order %d / %s', $order->id_cart, $order->id, 'Refund : '.$operationAmount));
-                }
-                // Rebill
+                } // Rebill
                 elseif ($amountOrder < $amountInitial) {
                     $operationAmount = $amountOrder - $amountCurrent;
                     $this->logDebug(sprintf('Cart %d: Order %d / %s', $order->id_cart, $order->id, 'Rebill < initial : '.$operationAmount));
@@ -1611,13 +1610,10 @@ class PayboxHelper extends PayboxAbstract
                 }
 
                 return $this->updatePayments($order, $details, $newAmount, $operationAmount, $amountScale, $currency);
-            }
-            // Direct Debit or N Times
-            elseif (($order->hasBeenPaid() && $this->canRefund($orderId)) || $this->isRecurring($orderId))
-            {
-                // Only Refund allowed
-                if(($amountOrder < $amountPaid) || ('refund' == $actionType))
-                {
+            } // Direct Debit or N Times
+            elseif (($order->hasBeenPaid() && $this->canRefund($orderId)) || $this->isRecurring($orderId)) {
+            // Only Refund allowed
+                if (($amountOrder < $amountPaid) || ('refund' == $actionType)) {
                     if ('refund' == $actionType) {
                         $operationAmount = ($explicitAmount) * -1;
                         if ($this->isRecurring($orderId)) {
@@ -1628,8 +1624,8 @@ class PayboxHelper extends PayboxAbstract
                             // $newAmount = $amountPaid + $operationAmount;
                             $newAmount = $amountCurrent + $operationAmount;
                         }
-                        // $order->total_paid_real = ($newAmount < 0) ? 0 : $newAmount;
-                        // $order->update();
+                            // $order->total_paid_real = ($newAmount < 0) ? 0 : $newAmount;
+                            // $order->update();
                     } else {
                         $operationAmount = ($amountPaid - $amountOrder) * -1;
                         // [2.2.2] Captured amount can be different from the order paid amount, use of the captured amount which is the official one
@@ -1684,7 +1680,6 @@ class PayboxHelper extends PayboxAbstract
         . ' WHERE `id_order` = %d';
         $sql = sprintf($sql, _DB_PREFIX_, round($newAmount * $amountScale), $order->id);
         if (Db::getInstance()->execute($sql)) {
-
             if (version_compare(_PS_VERSION_, '1.5', '>=')) {
                 // Save new Order total_paid_real to avoid loop (Order::update in Order::addOrderPayment function)
                 // $order->total_paid_real = $newAmount;
@@ -1692,7 +1687,6 @@ class PayboxHelper extends PayboxAbstract
 
                 $orderPayments = OrderPayment::getByOrderReference($order->reference);
                 if (count($orderPayments) != 0) {
-
                     /* [2.2.0] Refund is no longer attached to invoice (credit slip)
                     // Retrieve OrderInvoice
                     $orderInvoice = null;
