@@ -13,7 +13,7 @@
 * support@paybox.com so we can mail you a copy immediately.
 *
 *  @category  Module / payments_gateways
-*  @version   3.0.8
+*  @version   3.0.11
 *  @author    BM Services <contact@bm-services.com>
 *  @copyright 2012-2017 Verifone e-commerce
 *  @license   http://opensource.org/licenses/OSL-3.0
@@ -190,6 +190,7 @@ $_MODULE['<{epayment}prestashop>payboxadminorder_cba030a50c8a99c7e224adbe1cf5854
 $_MODULE['<{epayment}prestashop>payboxadminorder_7562c6b13c0f06f957ea2accbf55a914'] = 'Le montant à rembourser est trop élevé.';
 $_MODULE['<{epayment}prestashop>payboxadminorder_d3346c6cd608b990fcb71b5a15c83f99'] = 'Consultez la documentation pour obtenir de l\'aide';
 $_MODULE['<{epayment}prestashop>payboxadminorder_44cdd2788ef82e668dd74f24d332d026'] = 'Générer un remboursement Verifone e-commerce';
+$_MODULE['<{epayment}prestashop>payboxadminorder_a77a2e9ed912629c43a9d85277c60ae2'] = 'du complément par carte bancaire';
 $_MODULE['<{epayment}prestashop>payboxcontroller_a2774dd308f6939d7972a3d636648b5c'] = 'Le paiement a été annulé par l\'utilisateur sur la page de paiement Verifone e-commerce.';
 $_MODULE['<{epayment}prestashop>payboxcontroller_3ffa86b923125b13ed710de4dfb45937'] = 'Paiement annulé';
 $_MODULE['<{epayment}prestashop>payboxcontroller_d87152f68d5707e82aeb2f870a23a0f1'] = 'Le client est de retour de la page de paiement Verifone e-commerce.';

@@ -387,6 +387,17 @@ class PayboxHelper extends PayboxAbstract
         $msg->add();
     }
 
+    /**
+     * [addOrderPayment description]
+     *
+     * 3.0.11 Check whether 'firstNumbers' and 'lastNumbers' variables are set
+     *
+     * @version  3.0.11
+     * @param    Order  $order  [description]
+     * @param    [type] $type   [description]
+     * @param    [type] $params [description]
+     * @param    [type] $method [description]
+     */
     public function addOrderPayment(Order $order, $type, $params, $method)
     {
         if (method_exists('Cache', 'clean')) {
@@ -440,7 +451,6 @@ class PayboxHelper extends PayboxAbstract
             $this->logError(sprintf('Unable to save order payment for order %d: %s', $order->id, $db->getMsgError()));
         }
     }
-
 
     /**
      * [updatePSOrderPayment description]
@@ -1248,15 +1258,37 @@ class PayboxHelper extends PayboxAbstract
     }
 
     /**
-     * @return 2 if call error, 1 if payment platform error, 0 if success
+     * [makeCaptureAll description]
+     *
+     * 3.0.11 Mixed payment method management
+     *
+     * @version  3.0.11
+     * @param    Order   $order       [description]
+     * @param    array   $details     [description]
+     * @param    boolean $changestate [description]
+     * @return   2 if call error, 1 if payment platform error, 0 if success
      */
     public function makeCaptureAll(Order $order, array $details, $changestate = true)
     {
         $this->logDebug(sprintf('Order %d: capture all', $order->id));
 
+        // Retrieve method
+        $method = $this->getHelper()->getPaymentMethod($details['carte']);
+
+        // Check if mixed payment method
+        $isMixed = false;
+        if (1 == $method['mixte']) {
+            // Get mixed OrderPayment
+            $orderPayments = $this->getPSOrderPaymentMixed($order->reference);
+            if (false != $orderPayments) {
+                $isMixed = true;
+            }
+        }
+
         // Transaction informations
         $trxId = $details['id_transaction'];
         $callId = $details['num_appel'];
+
 
         // Refund partial (?)
         $partialRefund = 0;
@@ -1266,10 +1298,6 @@ class PayboxHelper extends PayboxAbstract
         }
 
         // Amount to capture
-        // $cart = new Cart($order->id_cart);
-        // $amount = $cart->getOrderTotal();
-        // Tmp : use of Order instead Cart
-        // $amount = $order->getOrdersTotalPaid();
         $amountScale = $this->getCurrencyScale($order);
         $amount = ((int)$details['amount']) / $amountScale;
 
@@ -1284,6 +1312,12 @@ class PayboxHelper extends PayboxAbstract
             } else {
                 $amount = $orderTotal;
             }
+        }
+
+        // Mixed payment: change transaction_id and amount
+        if ($isMixed) {
+            $trxId = $orderPayments['cc']->transaction_id;
+            $amount -= $orderPayments['mixed']->amount;
         }
 
         // Capture there are more than 7 days?
@@ -1429,10 +1463,31 @@ class PayboxHelper extends PayboxAbstract
     }
 
     /**
-     * @return 2 if call error, 1 if payment platform error, 0 if success
+     * [makeRefundAll description]
+     *
+     * 3.0.11 Mixed payment method management
+     *
+     * @version  3.0.11
+     * @param    Order   $order       [description]
+     * @param    array   $details     [description]
+     * @param    boolean $changestate [description]
+     * @return   2 if call error, 1 if payment platform error, 0 if success
      */
     public function makeRefundAll(Order $order, array $details)
     {
+        // Retrieve method
+        $method = $this->getHelper()->getPaymentMethod($details['carte']);
+
+        // Check if mixed payment method
+        $isMixed = false;
+        if (1 == $method['mixte']) {
+            // Get mixed OrderPayment
+            $orderPayments = $this->getPSOrderPaymentMixed($order->reference);
+            if (false != $orderPayments) {
+                $isMixed = true;
+            }
+        }
+
         // Transaction informations
         $trxId = $details['id_transaction'];
         $callId = $details['num_appel'];
@@ -1449,6 +1504,12 @@ class PayboxHelper extends PayboxAbstract
         // $amount -= $partialRefund;
         $amount = floatval($details['amount']) / $amountScale;
 
+        // Mixed payment: change transaction_id and amount
+        if ($isMixed) {
+            $trxId = $orderPayments['cc']->transaction_id;
+            $details['id_transaction'] = $trxId;
+            $amount -= $orderPayments['mixed']->amount;
+        }
 
         // $response = $this->_makeRefund($order, $trxId, $callId, $amount, $details['carte']);
         $result = $this->processPaymentModified($order, $details, $amount);
