@@ -383,6 +383,16 @@ class Epayment extends PaymentModule
         return $paymentOptions;
     }
 
+    /**
+     * [hookPaymentOptions description]
+     *
+     * 3.0.11 Add logo
+     *
+     * @since    3.0.5
+     * @version  3.0.11
+     * @param    array $params
+     * @return   PrestaShop\PrestaShop\Core\Payment\PaymentOption[]
+     */
     public function hookPaymentOptions($params)
     {
         // return array();
@@ -429,14 +439,22 @@ class Epayment extends PaymentModule
             $cardTypes[] = $method['type_card'];
         }
 
+        $displayLogo = false;
+        $paymentOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
+        if (is_callable(array($paymentOption, 'setLogo'))) {
+            $displayLogo = true;
+        }
+
         // Create payment option for each allowed card
         foreach ($cards as $card) {
             $paymentOption = new PrestaShop\PrestaShop\Core\Payment\PaymentOption();
             $paymentOption->setCallToActionText($card['label'])
                 ->setAction($card['url'])
                 ->setAdditionalInformation('')
-                // ->setAdditionalInformation($this->fetch('module:ps_checkpayment/views/templates/front/payment_infos.tpl'))
             ;
+            if ($displayLogo) {
+                $paymentOption->setLogo($card['image']);
+            }
             $paymentOptions[] = $paymentOption;
         }
 
@@ -448,8 +466,10 @@ class Epayment extends PaymentModule
                     $paymentOption->setCallToActionText($card['label'].' '.$this->l('card 3 times without fees'))
                         ->setAction($card['url'].'&recurring=1')
                         ->setAdditionalInformation('')
-                        // ->setAdditionalInformation($this->fetch('module:ps_checkpayment/views/templates/front/payment_infos.tpl'))
                     ;
+                    if ($displayLogo) {
+                        $paymentOption->setLogo($card['image']);
+                    }
                     $paymentOptions[] = $paymentOption;
                 }
             }
