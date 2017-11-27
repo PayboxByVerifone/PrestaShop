@@ -13,7 +13,7 @@
 * support@paybox.com so we can mail you a copy immediately.
 *
 *  @category  Module / payments_gateways
-*  @version   3.0.8
+*  @version   3.0.11
 *  @author    BM Services <contact@bm-services.com>
 *  @copyright 2012-2017 Verifone e-commerce
 *  @license   http://opensource.org/licenses/OSL-3.0
@@ -409,7 +409,7 @@ class PayboxHelper extends PayboxAbstract
                 'currency' => $currency->iso_code_num,
                 'payment_by' => $method,
                 'method' => Tools::substr($params['paymentType'], 0, 30),
-                'carte_num' => $params['firstNumbers'].'XXXX'.$params['lastNumbers'],
+                'carte_num' => (isset($params['firstNumbers']) ? $params['firstNumbers'] : '').(isset($params['lastNumbers']) ? 'XXXX'.$params['lastNumbers'] : ''),
                 'carte' => $params['cardType'],
                 'pays' => isset($params['country']) ? $params['country'] : '',
                 'ip' => $params['ip'],
@@ -439,6 +439,116 @@ class PayboxHelper extends PayboxAbstract
         if (!$db->insert('paybox_recurring', $data)) {
             $this->logError(sprintf('Unable to save order payment for order %d: %s', $order->id, $db->getMsgError()));
         }
+    }
+
+
+    /**
+     * [updatePSOrderPayment description]
+     *
+     * @since    3.0.11
+     * @version  3.0.11
+     * @param    [type] $order  [description]
+     * @param    [type] $params [description]
+     * @return   [type]         [description]
+     */
+    public function updatePSOrderPayment($order, $params)
+    {
+        $isCreditCard = true;
+        $orderPaymentCCFields = $this->getPSOrderPaymentCCFields();
+        foreach ($orderPaymentCCFields as $orderPaymentCCField) {
+            if (!isset($params[$orderPaymentCCField]) || empty($params[$orderPaymentCCField])) {
+                $isCreditCard = false;
+                break;
+            }
+        }
+
+        if ($isCreditCard) {
+            $orderPayment = $this->getPSOrderPayment($order->reference, $params['transaction']);
+            if (false !== $orderPayment) {
+                if ((isset($params['firstNumbers']) && isset($params['lastNumbers'])) && property_exists($orderPayment, 'card_number')) {
+                    $orderPayment->card_number = Tools::substr($params['firstNumbers'].'XXXXXX'.$params['lastNumbers'], 0, 30);
+                }
+                if (isset($params['cardType']) && property_exists($orderPayment, 'card_brand')) {
+                    $orderPayment->card_brand = $params['cardType'];
+                }
+                if (isset($params['validity']) && property_exists($orderPayment, 'card_expiration')) {
+                    $orderPayment->card_expiration = $params['validity'];
+                }
+
+                if (!$orderPayment->update()) {
+                    $this->logFatal(sprintf('Cart %d: Problem updating PrestaShop payment information', $cart->id));
+                    return false;
+                }
+
+            } else {
+                $this->logFatal(sprintf('Cart %d: No payment found to be updated', $order->id_cart));
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Retrieve PrestaShop OrderPayment from reference and transaction_id fields
+     *
+     * @since    3.0.11
+     * @version  3.0.11
+     * @param    string $orderReference
+     * @param    string $transactionId
+     * @return   OrderPayment|false
+     */
+    public function getPSOrderPayment($orderReference, $transactionId)
+    {
+        $found = false;
+
+        $orderPayments = OrderPayment::getByOrderReference($orderReference);
+        if (0 != count($orderPayments)) {
+            foreach ($orderPayments as $orderPayment) {
+                if ($transactionId == $orderPayment->transaction_id) {
+                    return $orderPayment;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Retrieve PrestaShop OrderPayment from reference for mixed payments
+     *
+     * @since    3.0.11
+     * @version  3.0.11
+     * @param    string $orderReference
+     * @return   array|false
+     */
+    public function getPSOrderPaymentMixed($orderReference)
+    {
+        $orderPayments = OrderPayment::getByOrderReference($orderReference);
+        if (1 < count($orderPayments)) {
+            $payments = array();
+            // First payment considered as the mixed one
+            $payments['mixed'] = $orderPayments[0];
+            // Second payment considered as the CC additional one
+            $payments['cc'] = $orderPayments[1];
+
+            return $payments;
+        }
+
+        return false;
+    }
+
+
+    /**
+     * Get fields for CC information
+     *
+     * @since    3.0.11
+     * @version  3.0.11
+     * @return   array
+     */
+    public function getPSOrderPaymentCCFields()
+    {
+        return array('firstNumbers', 'lastNumbers', 'cardType', 'validity');
     }
 
     /**

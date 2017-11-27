@@ -13,7 +13,7 @@
 * support@paybox.com so we can mail you a copy immediately.
 *
 *  @category  Module / payments_gateways
-*  @version   3.0.10
+*  @version   3.0.11
 *  @author    BM Services <contact@bm-services.com>
 *  @copyright 2012-2017 Verifone e-commerce
 *  @license   http://opensource.org/licenses/OSL-3.0
@@ -791,6 +791,13 @@ class Epayment extends PaymentModule
 
     /**
      * On IPN call for a standard payment
+     *
+     * 3.0.11 Add CC information
+     *
+     * @version  3.0.11
+     * @param    Cart   $cart   [description]
+     * @param    array  $params [description]
+     * @return   [type]         [description]
      */
     public function onStandardIPNSuccess(Cart $cart, array $params)
     {
@@ -834,13 +841,24 @@ class Epayment extends PaymentModule
 
         $this->logDebug(sprintf('Cart %d: Order %d validated, creating details', $cart->id, $this->currentOrder));
         $order = new Order($this->currentOrder);
+        // Create Verifone e-commerce payment
         $this->getHelper()->addOrderPayment($order, $type, $params, 'PayboxSystem');
+        // Update payment CC information
+        $this->getHelper()->updatePSOrderPayment($order, $params);
+
         $this->logDebug(sprintf('Cart %d: Order %d / %s', $cart->id, $order->id, $message));
     }
 
     /**
      * On IPN call for a mixed payment
-     * [3.0.8]
+     *
+     * 3.0.11 Add CC information, handle 'authorization' debit type
+     *
+     * @since    3.0.8
+     * @version  3.0.11
+     * @param    Cart   $cart   [description]
+     * @param    array  $params [description]
+     * @return   [type]         [description]
      */
     public function onMixedIPNSuccess(Cart $cart, array $params)
     {
@@ -869,6 +887,15 @@ class Epayment extends PaymentModule
                 $message .= $this->l('No more capture is pending.') . "\r\n";
             }
 
+            if ($this->_config->getDebitType() == 'receive') {
+                $type = 'authorization';
+                $message = $this->l('Payment was authorized by PaymentPlatform.');
+            } else {
+                $type = 'capture';
+                $message = $this->l('Payment was authorized and captured by PaymentPlatform.');
+            }
+
+
             // [3.0.4] Fix Context Error in Mail::Send() PS < 1.5.5
             if ((Context::getContext()->link instanceof Link) === false) {
                 Context::getContext()->link = new Link();
@@ -890,27 +917,22 @@ class Epayment extends PaymentModule
             $this->logDebug(sprintf('Cart %d: Order %d validated, creating details', $cart->id, $this->currentOrder));
             $order = new Order($this->currentOrder);
 
-            // Update payment amount
-            $orderPaymentFound = false;
-            $orderPayments = OrderPayment::getByOrderReference($order->reference);
-            if (count($orderPayments) != 0) {
-                foreach ($orderPayments as $orderPayment) {
-                    if ($orderPayment->transaction_id == $params['transaction']) {
-                        $orderPayment->amount = $amount;
-                        if ($orderPayment->update()) {
-                            $orderPaymentFound = true;
-                        } else {
-                            $this->logFatal(sprintf('Cart %d: Problem updating real payment amount %d', $cart->id, $amount));
-                        }
-                    }
+            // Update payment amount, CC information
+            $this->getHelper()->updatePSOrderPayment($order, $params);
+            $orderPayment = $this->getHelper()->getPSOrderPayment($order->reference, $params['transaction']);
+            if (false !== $orderPayment) {
+                $orderPayment->amount = $amount;
+                if ($orderPayment->update()) {
+                    $orderPaymentFound = true;
+                } else {
+                    $this->logFatal(sprintf('Cart %d: Problem updating real payment amount %d', $cart->id, $amount));
                 }
-            }
-            if (!$orderPaymentFound) {
+            } else {
                 $this->logFatal(sprintf('Cart %d: No payment found to be updated for real payment amount %d', $cart->id, $amount));
             }
 
             // Save payment information
-            $this->getHelper()->addOrderPayment($order, 'capture', $params, 'PayboxSystem');
+            $this->getHelper()->addOrderPayment($order, $type, $params, 'PayboxSystem');
 
             // $this->getHelper()->addOrderNote($order, $message);
             $this->logDebug(sprintf('Cart %d: Order %d / %s', $cart->id, $order->id, $message));
@@ -950,11 +972,13 @@ class Epayment extends PaymentModule
                     break;
                 }
             }
-            // Add OrderPayment
+            // Create Verifone e-commerce payment
             $paymentName = $this->getHelper()->getDisplayName($this->displayName, $params['cardType']);
             if (!$order->addOrderPayment($amount, $paymentName, $params['transaction'], null, null, $orderInvoice)) {
                 $this->logFatal(sprintf('Cart %d: Problem creating new payment for amount %d', $cart->id, $amount));
             }
+            // Update payment CC information
+            $this->getHelper()->updatePSOrderPayment($order, $params);
 
             // Info
             $message = sprintf($this->l('New payment capture of %s %s done.'), sprintf($amountFormat, $amount), $currency->sign) . "\r\n";
@@ -979,6 +1003,13 @@ class Epayment extends PaymentModule
 
     /**
      * On IPN call for a recurring payment
+     *
+     * 3.0.11 Add CC information
+     *
+     * @version  3.0.11
+     * @param    Cart   $cart   [description]
+     * @param    array  $params [description]
+     * @return   [type]         [description]
      */
     public function onThreetimeIPNSuccess(Cart $cart, array $params)
     {
@@ -1033,6 +1064,8 @@ class Epayment extends PaymentModule
             // Save payment information
             $this->getHelper()->addOrderPayment($order, 'capture', $params, 'PayboxSystemRecurring');
             $this->getHelper()->addOrderRecurringDetails($order, $platformAmount);
+            // Update payment CC information
+            $this->getHelper()->updatePSOrderPayment($order, $params);
 //            $this->getHelper()->addOrderNote($order, $message);
             $this->logDebug(sprintf('Cart %d: Order %d / %s', $cart->id, $order->id, $message));
 
