@@ -637,6 +637,8 @@ EOF;
     /**
      * [getContent description]
      *
+     * 3.0.11 Add mixed control / allow capture and refund
+     *
      * @version  3.0.11
      * @param    PayboxHtmlWriter $w      [description]
      * @param    array                  $params [description]
@@ -662,7 +664,7 @@ EOF;
         if (in_array($details['carte'], array('STANDARD', '1XRNP', 'CREDIT'))) {
             $this->_writeKwixoDetails($w, $details);
         } // Can be refunded?
-        elseif ($this->getHelper()->canRefund($orderId) && 'PREPAYEE' != $details['method']) {
+        elseif ($this->getHelper()->canRefund($orderId) && ('PREPAYEE' != $details['method'] || 'mixed' == $details['payment_by'])) {
             $this->_writeRefundableDetails($w, $details);
         } // Waiting for capture?
         elseif ($this->getHelper()->canCapture($orderId) && 'mixed' != $details['payment_by']) {
@@ -771,9 +773,8 @@ EOF;
      * 3.0.6  Amount validation
      *
      * @version  3.0.11
-     * @param    PayboxHtmlWriter $w       [description]
-     * @param    array                  $details [description]
-     * @return   [type]                          [description]
+     * @param    PayboxHtmlWriter $w
+     * @param    array                  $details
      */
     public function _processRefundAmount(PayboxHtmlWriter $w, array $details)
     {

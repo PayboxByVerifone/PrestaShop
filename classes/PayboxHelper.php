@@ -1780,6 +1780,8 @@ class PayboxHelper extends PayboxAbstract
         $amountInitial = ((int)$details['initial_amount']) / $amountScale;
         $amountCurrent = ((int)$details['amount']) / $amountScale;
 
+/*
+ * Allow refund on mixed payment method with allowed refundable amount
         // Retrieve method
         $method = $this->getHelper()->getPaymentMethod($details['carte']);
 
@@ -1793,16 +1795,17 @@ class PayboxHelper extends PayboxAbstract
             }
         }
 
-        if ($explicitAmount != 0) {
-            $actionType = 'refund';
-        }
-
         // Mixed payment: change amount and explicitAmount really available
         if ($isMixed) {
             $amountCurrent -= $orderPayments['mixed']->amount;
             if ($explicitAmount != 0 && $explicitAmount > $amountCurrent) {
                 $explicitAmount = $amountCurrent;
             }
+        }
+*/
+
+        if ($explicitAmount != 0) {
+            $actionType = 'refund';
         }
 
         if (('order' == $actionType) && ($amountOrder > $amountPaid) && ($amountOrder > $amountInitial)) {
@@ -1822,15 +1825,15 @@ class PayboxHelper extends PayboxAbstract
                 $newAmount = $amountOrder;
                 if ($amountOrder < $amountPaid) {
                     $operationAmount = ($amountPaid - $amountOrder) * -1;
-                    $this->logDebug(sprintf('Cart %d: Order %d / %s', $order->id_cart, $order->id, 'Refund : '.$operationAmount));
+                    $this->logDebug(sprintf('Cart %d: Order %d / %s', $order->id_cart, $order->id, 'Authorization - Refund: '.$operationAmount));
                 } // Rebill
                 elseif ($amountOrder < $amountInitial) {
                     $operationAmount = $amountOrder - $amountCurrent;
-                    $this->logDebug(sprintf('Cart %d: Order %d / %s', $order->id_cart, $order->id, 'Rebill < initial : '.$operationAmount));
+                    $this->logDebug(sprintf('Cart %d: Order %d / %s', $order->id_cart, $order->id, 'Authorization - Rebill < initial: '.$operationAmount));
                 } else {
                     $operationAmount = $amountInitial - $amountCurrent;
                     $newAmount = $amountInitial;
-                    $this->logDebug(sprintf('Cart %d: Order %d / %s', $order->id_cart, $order->id, 'Rebill > initial : '.$operationAmount.' - amount: '.$newAmount));
+                    $this->logDebug(sprintf('Cart %d: Order %d / %s', $order->id_cart, $order->id, 'Authorization - Rebill > initial: '.$operationAmount.' - amount: '.$newAmount));
 
                     $order->total_paid_real = ($newAmount < 0) ? 0 : $newAmount;
                     $order->update();
@@ -1851,6 +1854,7 @@ class PayboxHelper extends PayboxAbstract
                             // $newAmount = $amountPaid + $operationAmount;
                             $newAmount = $amountCurrent + $operationAmount;
                         }
+                        $this->logDebug(sprintf('Cart %d: Order %d / %s', $order->id_cart, $order->id, 'Refund action type: '.$operationAmount.' - amount: '.$newAmount));
                             // $order->total_paid_real = ($newAmount < 0) ? 0 : $newAmount;
                             // $order->update();
                     } else {
@@ -1858,6 +1862,7 @@ class PayboxHelper extends PayboxAbstract
                         // [2.2.2] Captured amount can be different from the order paid amount, use of the captured amount which is the official one
                         // $newAmount = $amountOrder;
                         $newAmount = $amountCurrent + $operationAmount;
+                        $this->logDebug(sprintf('Cart %d: Order %d / %s', $order->id_cart, $order->id, 'Rebill < initial: '.$operationAmount.' - amount: '.$newAmount));
                     }
 
                     if ($makeRefund) {

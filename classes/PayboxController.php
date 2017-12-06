@@ -13,7 +13,7 @@
 * support@paybox.com so we can mail you a copy immediately.
 *
 *  @category  Module / payments_gateways
-*  @version   3.0.8
+*  @version   3.0.11
 *  @author    BM Services <contact@bm-services.com>
 *  @copyright 2012-2017 Verifone e-commerce
 *  @license   http://opensource.org/licenses/OSL-3.0
@@ -115,7 +115,11 @@ class PayboxController extends PayboxAbstract
 
     /**
      * IPN proccessing
-     * [3.0.8] Mixed payment methods
+     *
+     * 3.0.11 Mixed payments: sleeps, check if mixed payment but not a mixed card_type (assume it is the additionnal payment)
+     * 3.0.8  Mixed payment methods
+     *
+     * @version  3.0.11
      */
     public function ipnAction()
     {
@@ -139,6 +143,13 @@ class PayboxController extends PayboxAbstract
 
             // [3.0.8] Try to retrieve Card from IPN params to process mixed payment methods
             if (array_key_exists('cardType', $params)) {
+
+                // [3.0.11] Mixed payment fixes on IPN calls
+                // ANCV: Sleep on CB for next payments
+                if ('LIMOCB' == $cardType) {
+                    sleep(6);
+                }
+
                 $cardType = $this->getHelper()->getRealPaymentMethodName($params['cardType']);
                 $method = $this->getHelper()->getPaymentMethod($cardType);
                 if (false !== $method) {
@@ -158,7 +169,22 @@ class PayboxController extends PayboxAbstract
                         // Check if several payments are expected
                         if ('1' !== $indexData[1]) {
                             $type = 'mixed';
-                            sleep(6);
+
+                            // [3.0.11] Check if it is an additionnal payment to make it processed after the real mixed one
+                            $mixedPaymentMethods = $this->getHelper()->getMixedPaymentMethods();
+                            $isMainMixed = false;
+                            if (false !== $mixedPaymentMethods) {
+                                foreach ($mixedPaymentMethods as $mixedPaymentMethod) {
+                                    if ($cardType == $mixedPaymentMethod['type_card']) {
+                                        $isMainMixed = true;
+                                        break;
+                                    }
+                                }
+                            }
+
+                            if (!$isMainMixed) {
+                                sleep(10);
+                            }
                         }
                     }
                 }

@@ -46,7 +46,7 @@ class Epayment extends PaymentModule
 
         $this->name = 'epayment';
         $this->tab = 'payments_gateways';
-        $this->version = '3.0.10';
+        $this->version = '3.0.11';
         $this->author = 'Verifone e-commerce';
         $this->bootstrap = true;
 
@@ -815,9 +815,8 @@ class Epayment extends PaymentModule
      * 3.0.11 Add CC information
      *
      * @version  3.0.11
-     * @param    Cart   $cart   [description]
-     * @param    array  $params [description]
-     * @return   [type]         [description]
+     * @param    Cart $cart
+     * @param    string[] $params
      */
     public function onStandardIPNSuccess(Cart $cart, array $params)
     {
@@ -872,13 +871,12 @@ class Epayment extends PaymentModule
     /**
      * On IPN call for a mixed payment
      *
-     * 3.0.11 Add CC information, handle 'authorization' debit type
+     * 3.0.11 Add CC information, handle 'authorization' debit type, backup total_paid_real (modified by $order->addOrderPayment)
      *
      * @since    3.0.8
      * @version  3.0.11
-     * @param    Cart   $cart   [description]
-     * @param    array  $params [description]
-     * @return   [type]         [description]
+     * @param    Cart $cart
+     * @param    string[] $params
      */
     public function onMixedIPNSuccess(Cart $cart, array $params)
     {
@@ -993,9 +991,16 @@ class Epayment extends PaymentModule
                 }
             }
             // Create Verifone e-commerce payment
+            $order_total_paid_real = $order->total_paid_real;
             $paymentName = $this->getHelper()->getDisplayName($this->displayName, $params['cardType']);
             if (!$order->addOrderPayment($amount, $paymentName, $params['transaction'], null, null, $orderInvoice)) {
                 $this->logFatal(sprintf('Cart %d: Problem creating new payment for amount %d', $cart->id, $amount));
+            }
+            $order->total_paid_real = $order_total_paid_real;
+            if (!$order->update()) {
+                $this->logFatal(sprintf('Cart %d: Problem updating $order->total_paid_real %f', $cart->id, $order->total_paid_real));
+            } else {
+                $this->logDebug(sprintf('Cart %d: Updated $order->total_paid_real %f', $cart->id, $order->total_paid_real));
             }
             // Update payment CC information
             $this->getHelper()->updatePSOrderPayment($order, $params);
@@ -1027,9 +1032,8 @@ class Epayment extends PaymentModule
      * 3.0.11 Add CC information
      *
      * @version  3.0.11
-     * @param    Cart   $cart   [description]
-     * @param    array  $params [description]
-     * @return   [type]         [description]
+     * @param    Cart $cart
+     * @param    string[] $params
      */
     public function onThreetimeIPNSuccess(Cart $cart, array $params)
     {
