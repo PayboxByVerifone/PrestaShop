@@ -1193,13 +1193,17 @@ class PayboxHelper extends PayboxAbstract
 
     /**
      * Try to retrieve CardType from IPN params
-     * [3.0.8]
+     *
+     * 3.0.11 Removed sleep, now on PayboxController
+     *
+     * @version  3.0.11
+     * @param    string $cardType
+     * @return   string Real payment method name
      */
     public function getRealPaymentMethodName($cardType)
     {
-        // ANCV: Sleep for next payments
+        // ANCV: additionnal CB payment received first
         if ('LIMOCB' == $cardType) {
-            sleep(6);
             return 'ANCV';
         }
 
@@ -1215,6 +1219,23 @@ class PayboxHelper extends PayboxAbstract
         if (!empty($result)) {
             $result = $result[0];
         }
+        return $result;
+    }
+
+    /**
+     * Get all mixed payment methods
+     *
+     * @since    3.0.11
+     * @version  3.0.11
+     * @return   array()
+     */
+    public function getMixedPaymentMethods()
+    {
+        $db = Db::getInstance();
+        $sql = 'SELECT `type_paiement`, `type_card` FROM `%spaybox_card` WHERE `mixte` = 1';
+        $sql = sprintf($sql, _DB_PREFIX_);
+
+        $result = $db->executeS($sql);
         return $result;
     }
 
@@ -1314,7 +1335,7 @@ class PayboxHelper extends PayboxAbstract
             }
         }
 
-        // Mixed payment: change transaction_id and amount
+        // Mixed payment: adapt transaction_id and amount
         if ($isMixed) {
             $trxId = $orderPayments['cc']->transaction_id;
             $amount -= $orderPayments['mixed']->amount;
@@ -1353,6 +1374,11 @@ class PayboxHelper extends PayboxAbstract
         $message .= $this->l('Ref.:').' '.$response['NUMTRANS'].chr(10).chr(13);
         $message .= $this->l('Capture amount:').' '.($amount - $partialRefund).' '.$currency->sign.chr(10).chr(13);
         $this->addOrderNote($order, $message);
+
+        // Mixed payment: re-adapt amount to keep same based amount in Verifone e-commerce table
+        if ($isMixed) {
+            $amount += $orderPayments['mixed']->amount;
+        }
 
         // Update database
         $sql = 'UPDATE `%spaybox_order` SET `payment_status` = "capture",'
@@ -1732,6 +1758,15 @@ class PayboxHelper extends PayboxAbstract
 
     /**
      * Process modification of amounts on an order
+     *
+     * 3.0.11 Mixed payment management (order / explicit amount)
+     *
+     * @version  3.0.11
+     * @param    Order $order
+     * @param    array $details
+     * @param    float $explicitAmount
+     * @param    bool $makeRefund
+     * @return   array()
      */
     public function processPaymentModified($order, $details, $explicitAmount = 0, $makeRefund = true)
     {
@@ -1745,8 +1780,29 @@ class PayboxHelper extends PayboxAbstract
         $amountInitial = ((int)$details['initial_amount']) / $amountScale;
         $amountCurrent = ((int)$details['amount']) / $amountScale;
 
+        // Retrieve method
+        $method = $this->getHelper()->getPaymentMethod($details['carte']);
+
+        // Check if mixed payment method
+        $isMixed = false;
+        if (1 == $method['mixte']) {
+            // Get mixed OrderPayment
+            $orderPayments = $this->getPSOrderPaymentMixed($order->reference);
+            if (false != $orderPayments) {
+                $isMixed = true;
+            }
+        }
+
         if ($explicitAmount != 0) {
             $actionType = 'refund';
+        }
+
+        // Mixed payment: change amount and explicitAmount really available
+        if ($isMixed) {
+            $amountCurrent -= $orderPayments['mixed']->amount;
+            if ($explicitAmount != 0 && $explicitAmount > $amountCurrent) {
+                $explicitAmount = $amountCurrent;
+            }
         }
 
         if (('order' == $actionType) && ($amountOrder > $amountPaid) && ($amountOrder > $amountInitial)) {
@@ -1947,6 +2003,17 @@ class PayboxHelper extends PayboxAbstract
         }
     }
 
+    /**
+     * [getDisplayName description]
+     *
+     * 3.0.11 Add payment method label management (option 3 and 4)
+     *
+     * @version  3.0.11
+     * @param    string $moduleName
+     * @param    string $paymentMethod
+     * @param    string|null $mode
+     * @return   string
+     */
     public function getDisplayName($moduleName, $paymentMethod, $mode = null)
     {
         $displayMode = Configuration::get('PAYBOX_PAYMENT_DISPLAY', 0);
@@ -1956,6 +2023,19 @@ class PayboxHelper extends PayboxAbstract
             $name = $paymentMethod;
         } elseif (2 == $displayMode) {
             $name = $moduleName.' ['.$paymentMethod.']';
+        } elseif (3 == $displayMode || 4 == $displayMode) {
+            $method = $this->getPaymentMethod($paymentMethod);
+            if (false !== $method && isset($method['label'])) {
+                $label = $method['label'];
+            } else {
+                $label = $paymentMethod;
+            }
+
+            if (3 == $displayMode) {
+                $name = $label;
+            } else {
+                $name = $moduleName.' ['.$label.']';
+            }
         }
 
         // Add n times payment information

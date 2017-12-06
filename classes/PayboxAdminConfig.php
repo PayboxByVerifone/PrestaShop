@@ -387,6 +387,8 @@ EOF;
             0 => $this->l('Payment module (ex: ').'Verifone e-commerce)',
             1 => $this->l('Payment method (ex: ').'VISA)',
             2 => $this->l('Payment module and method (ex: ').'Verifone e-commerce [VISA])',
+            3 => $this->l('Payment method label (ex: ').'Carte Visa)',
+            4 => $this->l('Payment module and method label (ex: ').'Verifone e-commerce [Carte Visa])',
         );
         $w->formSelect(
             'PAYBOX_PAYMENT_DISPLAY',

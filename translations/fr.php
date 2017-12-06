@@ -145,6 +145,8 @@ $_MODULE['<{epayment}prestashop>payboxadminconfig_75dc895faf2eb3c6c3b4649cc96a43
 $_MODULE['<{epayment}prestashop>payboxadminconfig_fe7aa1657c958c1eb65ee4f9c2df3c14'] = 'Module de paiement (exemple : ';
 $_MODULE['<{epayment}prestashop>payboxadminconfig_9cdcbe880d24b2e86879d99b21ae3ccf'] = 'Moyen de paiement (exemple : ';
 $_MODULE['<{epayment}prestashop>payboxadminconfig_23037a7595afa6d40abbb027475e5acb'] = 'Module et moyen de paiement (exemple : ';
+$_MODULE['<{epayment}prestashop>payboxadminconfig_f170fafc5232e177ad4539db797e2d63'] = 'Libellé du moyen de paiement (exemple : ';
+$_MODULE['<{epayment}prestashop>payboxadminconfig_424dff8ac9029b314d7d3228c149f4f7'] = 'Module et libellé du moyen de paiement (exemple : ';
 $_MODULE['<{epayment}prestashop>payboxadminconfig_67f771ae4d4fd8d37e01e7e1bd586b1d'] = 'Automatisation des actions Back-Office';
 $_MODULE['<{epayment}prestashop>payboxadminconfig_bda7c7e0806a963b58d418c36499221f'] = 'L\'automatisation des actions Back-Office va déclencher des remboursements pour chaque modification du montant de la commande (suppression de produit, modification de prix d\'un produit...).';
 $_MODULE['<{epayment}prestashop>payboxadminorder_ab116d52ec2aa15f6cc3c5ff66deb399'] = 'Détails du paiement';
