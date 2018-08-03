@@ -1,5 +1,15 @@
 # Change Log
 
+## [3.0.11] 2018-08-03
+### Ajouts
+- Cryptage des paramétres : ajout du support d'OpenSSL en remplacement de MCrypt
+- Cartes bancaires : stockage des informations de marque, numéro et date d'expiration
+- Paiements mixtes : gestion remboursement et capture sur le complément en carte bancaire
+- Moyens de paiement : choix du mode d'affichage supplémentaires (libellé du moyen de paiement, module + libellé du moyen de paiement) dans le Back et Front Office
+
+### Modifications
+- PrestaShop 1.7 : affichage du logo du moyen de paiement dans le tunnel de commande
+
 ## [3.0.10] 2017-08-31
 ### Modifications
 - Documentation : changement des numéros de téléphone du support
@@ -13,7 +23,7 @@
 
 ## [3.0.8] 2017-07-19
 ### Ajouts
-- Gestion paiements fractionnés (ANCV + paramètre Z): champ de configuration pour chaque moyen de paiement, traitement IPN spécifique, gestion paramètre Z
+- Paiements mixtes (ANCV + paramètre Z): champ de configuration pour chaque moyen de paiement, traitement IPN spécifique, gestion paramètre Z
 - Compatibilité PrestaShop 1.7 : gestion de la nouvelle fonctionnalité "Recalculer les frais de port après modification de commande"
 - Capture manuelle : validation du montant saisi avec gestion de la décimale de la devise (ajout sur Remboursement manuel)
 - Support basique de surcharges : classe principale du module dans 'override/modules/epayment' et classes utilitaires dans 'override/modules/epayment/classes'
@@ -21,7 +31,7 @@
 ### Modifications
 - Page de redirection vers le paiement : style
 - Page d'attente de retour de paiement : style, augmentation des itérations (10 => 20)
-- CartLocker : ajout 'id_transaction' pour gestion paiements fractionnés
+- CartLocker : ajout 'id_transaction' pour gestion paiements mixtes
 - Automatisation Back-Office : désactivée par défaut, alerte dans la configuration du module
 - Documentation : suppression du PDF dans le module, récupération lors de l'appel au service de vérification de version Verifone e-commerce
 - Traductions
