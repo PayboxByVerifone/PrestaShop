@@ -1258,7 +1258,7 @@ class PayboxHelper extends PayboxAbstract
     public function getMixedPaymentMethods()
     {
         $db = Db::getInstance();
-        $sql = 'SELECT `type_paiement`, `type_card` FROM `%spaybox_card` WHERE `mixte` = 1';
+        $sql = 'SELECT `type_payment`, `type_card` FROM `%spaybox_card` WHERE `mixte` = 1';
         $sql = sprintf($sql, _DB_PREFIX_);
 
         $result = $db->executeS($sql);
