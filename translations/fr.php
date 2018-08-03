@@ -117,7 +117,7 @@ $_MODULE['<{epayment}prestashop>payboxadminconfig_03b20e20e097cee014e5f889ac92ca
 $_MODULE['<{epayment}prestashop>payboxadminconfig_a7d6475ec8993b7224d6facc8cb0ead6'] = 'Numéro de site';
 $_MODULE['<{epayment}prestashop>payboxadminconfig_fd33abdf2ff42b08cc100b90874b3a54'] = 'Numéro de site (fourni par Verifone e-commerce).';
 $_MODULE['<{epayment}prestashop>payboxadminconfig_021da1b20f73dc252361a54d80497ef3'] = 'Numéro de rang';
-$_MODULE['<{epayment}prestashop>payboxadminconfig_27eab08f804ed489952126bb4cad62f1'] = 'Numéro de rang (fourni par Verifone e-commerce, les 2 derniers chiffres).';
+$_MODULE['<{epayment}prestashop>payboxadminconfig_856d9f29fe5fea83516fddea01aff91a'] = 'Numéro de rang (fourni par Verifone e-commerce).';
 $_MODULE['<{epayment}prestashop>payboxadminconfig_29ee5d1ebcc033234938a5234f1f2075'] = 'Identifiant';
 $_MODULE['<{epayment}prestashop>payboxadminconfig_dcf3cb3a6763129c8a903e956346c53e'] = 'Identifiant Verifone e-commerce (fourni par Verifone e-commerce).';
 $_MODULE['<{epayment}prestashop>payboxadminconfig_9b808d1e9bccb91c8f45981e1e640e9b'] = 'Clé HMAC';

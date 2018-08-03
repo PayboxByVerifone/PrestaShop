@@ -289,6 +289,22 @@ class PayboxHelper extends PayboxAbstract
         );
     }
 
+    /**
+     * Direct call
+     *
+     * 3.0.11 CB55: rank on 3 positions
+     *
+     * @version  3.0.11
+     *
+     * @param  Order  $order
+     * @param  string $type
+     * @param  string $trxId
+     * @param  string $callId
+     * @param  string $amount
+     * @param  string $cardType
+     *
+     * @return array()
+     */
     private function _callDirect(Order $order, $type, $trxId, $callId, $amount, $cardType)
     {
         $customer = new Customer($order->id_customer);
@@ -315,7 +331,7 @@ class PayboxHelper extends PayboxAbstract
             'NUMAPPEL' => sprintf('%010d', $callId),
             'NUMQUESTION' => sprintf('%010d', time()),
             'NUMTRANS' => sprintf('%010d', $trxId),
-            'RANG' => sprintf('%02d', $this->getConfig()->getRank()),
+            'RANG' => sprintf('%03d', $this->getConfig()->getRank()),
             'REFERENCE' => $order->id_cart.' - '.$this->getBillingName($customer),
             'SITE' => sprintf('%07d', $this->getConfig()->getSite()),
             'TYPE' => $type,
@@ -457,6 +473,7 @@ class PayboxHelper extends PayboxAbstract
      *
      * @since    3.0.11
      * @version  3.0.11
+     *
      * @param    [type] $order  [description]
      * @param    [type] $params [description]
      * @return   [type]         [description]
@@ -504,6 +521,7 @@ class PayboxHelper extends PayboxAbstract
      *
      * @since    3.0.11
      * @version  3.0.11
+     *
      * @param    string $orderReference
      * @param    string $transactionId
      * @return   OrderPayment|false
@@ -529,6 +547,7 @@ class PayboxHelper extends PayboxAbstract
      *
      * @since    3.0.11
      * @version  3.0.11
+     *
      * @param    string $orderReference
      * @return   array|false
      */
@@ -554,6 +573,7 @@ class PayboxHelper extends PayboxAbstract
      *
      * @since    3.0.11
      * @version  3.0.11
+     *
      * @return   array
      */
     public function getPSOrderPaymentCCFields()
@@ -562,10 +582,16 @@ class PayboxHelper extends PayboxAbstract
     }
 
     /**
-     * @param Order $order PrestaShop Order object
-     * @param array $card Card information
+     * Create form data
+     *
+     * 3.0.11 CB55: rank on 3 positions
+     *
+     * @version  3.0.11
+     *
+     * @param Order  $order PrestaShop Order object
+     * @param array  $card Card information
      * @param string $type one of standard ou threetime
-     * @param array $additionalParams
+     * @param array  $additionalParams
      * @return array
      */
     public function buildSystemParams(Cart $cart, array $card, $type, array $additionalParams = array())
@@ -590,7 +616,7 @@ class PayboxHelper extends PayboxAbstract
 
         // Merchant information
         $values['PBX_SITE'] = $this->getConfig()->getSite();
-        $values['PBX_RANG'] = substr(sprintf('%02d', $this->getConfig()->getRank()), -2);
+        $values['PBX_RANG'] = substr(sprintf('%03d', $this->getConfig()->getRank()), -3);
         $values['PBX_IDENTIFIANT'] = $this->getConfig()->getIdentifier();
 
         // Card information

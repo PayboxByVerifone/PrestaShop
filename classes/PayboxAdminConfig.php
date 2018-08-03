@@ -13,7 +13,7 @@
 * support@paybox.com so we can mail you a copy immediately.
 *
 *  @category  Module / payments_gateways
-*  @version   3.0.8
+*  @version   3.0.11
 *  @author    BM Services <contact@bm-services.com>
 *  @copyright 2012-2017 Verifone e-commerce
 *  @license   http://opensource.org/licenses/OSL-3.0
@@ -807,6 +807,15 @@ EOF;
         $w->js($js);
     }
 
+    /**
+     * [_writeSettingsBlock description]
+     *
+     * 3.0.11 CB55: rank on 3 positions
+     *
+     * @version  3.0.11
+     *
+     * @param  PayboxHtmlWriter $w
+     */
     private function _writeSettingsBlock(PayboxHtmlWriter $w)
     {
         $label = $this->l('Parameters');
@@ -843,7 +852,7 @@ EOF;
             'PAYBOX_RANG',
             $this->l('Rank'),
             $rank,
-            $this->l('Rank number (provided by PaymentPlatform, last 2 digits).'),
+            $this->l('Rank number (provided by PaymentPlatform).'),
             40
         );
         $w->formText(
