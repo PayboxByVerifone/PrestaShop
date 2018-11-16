@@ -1,5 +1,9 @@
 # Change Log
 
+## [3.0.12] 2018-11-16
+### Modifications
+- Compatibilité Curl 7.6.2, check protocole HTTP 1.0, 1.1, 2
+
 ## [3.0.11] 2018-08-03
 ### Ajouts
 - Cryptage des paramétres : ajout du support d'OpenSSL en remplacement de MCrypt

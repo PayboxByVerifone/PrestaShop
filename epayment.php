@@ -13,7 +13,7 @@
 * support@paybox.com so we can mail you a copy immediately.
 *
 *  @category  Module / payments_gateways
-*  @version   3.0.11
+*  @version   3.0.12
 *  @author    BM Services <contact@bm-services.com>
 *  @copyright 2012-2017 Verifone e-commerce
 *  @license   http://opensource.org/licenses/OSL-3.0
@@ -46,7 +46,7 @@ class Epayment extends PaymentModule
 
         $this->name = 'epayment';
         $this->tab = 'payments_gateways';
-        $this->version = '3.0.11';
+        $this->version = '3.0.12';
         $this->author = 'Verifone e-commerce';
         $this->bootstrap = true;
 
