@@ -1,5 +1,9 @@
 # Change Log
 
+## [3.0.13] 2019-10-03
+### Modifications
+- Compatibilité Prestashop 1.7.6.x
+
 ## [3.0.12] 2018-11-16
 ### Modifications
 - Compatibilité Curl 7.6.2, check protocole HTTP 1.0, 1.1, 2
