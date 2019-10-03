@@ -32,7 +32,7 @@
 *  @license   http://opensource.org/licenses/OSL-3.0
 *  @link      http://www.paybox.com/
  */
-class GenericPaymentValidationModuleFrontController extends ModuleFrontController
+class PayboxValidationModuleFrontController extends ModuleFrontController
 {
 	/**
      * @see FrontController::postProcess()
