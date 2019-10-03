@@ -13,7 +13,7 @@
 * support@paybox.com so we can mail you a copy immediately.
 *
 *  @category  Module / payments_gateways
-*  @version   3.0.12
+*  @version   3.0.13
 *  @author    BM Services <contact@bm-services.com>
 *  @copyright 2012-2017 Verifone e-commerce
 *  @license   http://opensource.org/licenses/OSL-3.0
@@ -56,6 +56,7 @@ class Epayment extends PaymentModule
 
         $this->displayName = 'Verifone e-commerce';
         $this->description = $this->l('In one integration, offer many payment methods, get a customized secure payment page, multi-lingual and multi-currency and offer debit on delivery or in 3 installments without charges for your customers.');
+        $this->controllers = array('redirect','validation');
     }
 
     public function getConfig()
@@ -121,6 +122,12 @@ class Epayment extends PaymentModule
     public function getPath()
     {
         return $this->_path;
+    }
+    
+    public function getRedirPath()
+    {
+        $base = Tools::getHttpHost(true, false).__PS_BASE_URI__;
+        return $base.= 'index.php?fc=module&module=epayment&controller=redirect&a=r';
     }
 
     public function hookAdminOrder($params)
@@ -333,7 +340,7 @@ class Epayment extends PaymentModule
             // }
 
             $params = array(
-                'a' => 'r',
+//                 'a' => 'r',
                 'method' => $method['id_card'],
             );
 
@@ -344,7 +351,8 @@ class Epayment extends PaymentModule
                 'payment' => $method['type_payment'],
                 'card' => $method['type_card'],
                 'label' => $method['label'],
-                'url' => $this->getPath().'?'.$params,
+//                 'url' => $this->getPath().'?'.$params,
+                'url' => $this->getRedirPath().'&'.$params,
                 'image' => $this->getMethodImageUrl($method['type_card']),
             );
             $cards[] = $card;
@@ -416,7 +424,7 @@ class Epayment extends PaymentModule
             // }
 
             $params = array(
-                'a' => 'r',
+//                 'a' => 'r',
                 'method' => $method['id_card'],
             );
 
@@ -427,7 +435,8 @@ class Epayment extends PaymentModule
                 'payment' => $method['type_payment'],
                 'card' => $method['type_card'],
                 'label' => $this->l('Pay by').' '.$method['label'],
-                'url' => $this->getPath().'?'.$params,
+//                 'url' => $this->getPath().'?'.$params,
+                'url' => $this->getRedirPath().'&'.$params,
                 'image' => $this->getMethodImageUrl($method['type_card']),
             );
             $cards[] = $card;
@@ -848,7 +857,7 @@ class Epayment extends PaymentModule
         $this->logDebug(sprintf('Cart %d: Validating order', $cart->id));
         try {
             $paymentName = $this->getHelper()->getDisplayName($this->displayName, $params['cardType']);
-            $result = parent::validateOrder($cart->id, $state, $amount, $paymentName, $message, array('transaction_id' => $params['transaction']), null, false, $cart->secure_key);
+            $result = parent::validateOrder($cart->id, $state, $amount, $paymentName, $message, array('transaction_id' => $params['transaction']), null, $cart->id_currency, $cart->secure_key);
         } catch (Exception $e) {
             $this->logFatal(sprintf('Cart %d: Error validating PrestaShop order:', $cart->id, $e->getMessage()));
         }

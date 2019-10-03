@@ -13,7 +13,7 @@
 * support@paybox.com so we can mail you a copy immediately.
 *
 *  @category  Module / payments_gateways
-*  @version   3.0.8
+*  @version   3.0.13
 *  @author    BM Services <contact@bm-services.com>
 *  @copyright 2012-2017 Verifone e-commerce
 *  @license   http://opensource.org/licenses/OSL-3.0
@@ -21,10 +21,10 @@
 */
 
 $dir = dirname(dirname(dirname(__FILE__)));
-$action = isset($_GET['a']) ? $_GET['a'] : null;
+//$action = isset($_GET['a']) ? $_GET['a'] : null;
 
 require_once($dir.'/config/config.inc.php');
-if (version_compare(_PS_VERSION_, '1.5', '<') || !in_array($action, array('i', 'j'))) {
+if (version_compare(_PS_VERSION_, '1.5', '<') ) {
     require_once($dir.'/init.php');
 }
 
@@ -40,42 +40,42 @@ if (file_exists($overrideDir.'epayment.php')) {
     require_once(dirname(__FILE__).'/epayment.php');
 }
 
-$c = new PayboxController();
-try {
-    switch ($action) {
-        // Cancel
-        case 'c':
-            $c->cancelAction();
-            break;
+// $c = new PayboxController();
+// try {
+//     switch ($action) {
+//         // Cancel
+//         case 'c':
+//             $c->cancelAction();
+//             break;
 
-        // Failure
-        case 'f':
-            $c->failureAction();
-            break;
+//         // Failure
+//         case 'f':
+//             $c->failureAction();
+//             break;
 
-        // Redirect
-        case 'r':
-            $c->redirectAction();
-            break;
+//         // Redirect
+//         case 'r':
+//             $c->redirectAction();
+//             break;
 
-        // Success
-        case 's':
-            $c->successAction();
-            break;
+//         // Success
+//         case 's':
+//             $c->successAction();
+//             break;
 
-        // IPN
-        case 'i':
-            //file_put_contents('debug.log', file_get_contents('php://input'));die();
-            $c->ipnAction();
-            break;
-        case 'j':
-            $c->ipnAction();
-            break;
+//         // IPN
+//         case 'i':
+//             //file_put_contents('debug.log', file_get_contents('php://input'));die();
+//             $c->ipnAction();
+//             break;
+//         case 'j':
+//             $c->ipnAction();
+//             break;
 
-        default:
-            $c->defaultAction();
-    }
-} catch (Exception $e) {
-    header('Status: 500 Error', true, 500);
-    echo $e->getMessage();
-}
+//         default:
+//             $c->defaultAction();
+//     }
+// } catch (Exception $e) {
+//     header('Status: 500 Error', true, 500);
+//     echo $e->getMessage();
+// }
