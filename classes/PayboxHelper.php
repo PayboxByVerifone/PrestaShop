@@ -13,7 +13,7 @@
 * support@paybox.com so we can mail you a copy immediately.
 *
 *  @category  Module / payments_gateways
-*  @version   3.0.12
+*  @version   3.0.13
 *  @author    BM Services <contact@bm-services.com>
 *  @copyright 2012-2017 Verifone e-commerce
 *  @license   http://opensource.org/licenses/OSL-3.0
@@ -284,8 +284,8 @@ class PayboxHelper extends PayboxAbstract
         $data = count($result) == 2 ? $result[1] : null;
         $headers = explode("\r\n", $result[0]);
         if (preg_match('#^HTTP/(1\.0|1\.1|2) ([0-9]{3}) (.*)$#i', array_shift($headers), $matches)) {
-            $code = intval($matches[1]);
-            $status = trim($matches[2]);
+            $code = intval($matches[2]);
+            $status = trim($matches[3]);
         } else {
             $code = 999;
             $status = 'Error';
@@ -611,7 +611,7 @@ class PayboxHelper extends PayboxAbstract
 
         // Parameters
         $base = Tools::getHttpHost(true, false).__PS_BASE_URI__;
-        $base .= 'modules/epayment/index.php?t=';
+        $base .= 'index.php?fc=module&module=epayment&controller=validation&t=';
         if ($type == 'threetime') {
             $base .= '3';
         } else {

@@ -13,7 +13,7 @@
 * support@paybox.com so we can mail you a copy immediately.
 *
 *  @category  Module / payments_gateways
-*  @version   3.0.12
+*  @version   3.0.13
 *  @author    BM Services <contact@bm-services.com>
 *  @copyright 2012-2017 Verifone e-commerce
 *  @license   http://opensource.org/licenses/OSL-3.0
@@ -73,8 +73,8 @@ class PayboxCurl
         if (!preg_match('#^HTTP/(1\.0|1\.1|2) ([0-9]{3}) (.*)$#i', $status, $matches)) {
             throw new Exception('Invalid status returned by remote server');
         }
-        $code = intval($matches[1]);
-        $status = $matches[2];
+        $code = intval($matches[2]);
+        $status = $matches[3];
         
         return array(
             'code' => $code,
