@@ -13,7 +13,7 @@
 * support@paybox.com so we can mail you a copy immediately.
 *
 *  @category  Module / payments_gateways
-*  @version   3.0.11
+*  @version   3.0.14
 *  @author    BM Services <contact@bm-services.com>
 *  @copyright 2012-2017 Verifone e-commerce
 *  @license   http://opensource.org/licenses/OSL-3.0
@@ -271,13 +271,16 @@ EOF;
 $('#PAYBOX_3DS').change(function() {
     var alert = $('#PAYBOX_3DS_alert');
     var npt = $('#PAYBOX_3DS_MIN_AMOUNT_container');
+    var npt2 = $('#PAYBOX_3DS_MAX_AMOUNT_container');
     if (this.value == 1) {
         alert.show('normal');
         npt.show('normal');
+        npt2.show('normal');
     }
     else {
         alert.hide('normal');
         npt.hide('normal');
+        npt2.hide('normal');
     }
 }).change();
 
@@ -303,6 +306,17 @@ EOF;
             null,
             $this->getConfig()->get3DSEnabled() == '1'
         );
+        
+        // 3-D Secure: maximal amount
+        $w->formText(
+            'PAYBOX_3DS_MAX_AMOUNT',
+            $this->l('Maximum amount order 3D-Secure'),
+            $this->getConfig()->get3DSMaxAmount(),
+            $this->l('Leave empty for all payments using the 3D-Secure authentication'),
+            3,
+            null,
+            $this->getConfig()->get3DSEnabled() == '1'
+            );
 
         // Threetime: enable/disable
         $w->formSelect(

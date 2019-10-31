@@ -13,7 +13,7 @@
 * support@paybox.com so we can mail you a copy immediately.
 *
 *  @category  Module / payments_gateways
-*  @version   3.0.13
+*  @version   3.0.14
 *  @author    BM Services <contact@bm-services.com>
 *  @copyright 2012-2017 Verifone e-commerce
 *  @license   http://opensource.org/licenses/OSL-3.0
@@ -682,7 +682,8 @@ class PayboxHelper extends PayboxAbstract
             case 1:
                 if ($this->getConfig()->get3DSEnabled()) {
                     $tdsAmount = $this->getConfig()->get3DSAmount();
-                    $enable3ds = empty($tdsAmount) || ($orderAmount >= $tdsAmount);
+                    $maxAmount = $this->getConfig()->get3DSMaxAmount();
+                    $enable3ds = empty($tdsAmount) || ($orderAmount >= $tdsAmount && $orderAmount <= $maxAmount);
                 }
                 break;
 
