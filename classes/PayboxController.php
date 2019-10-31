@@ -13,7 +13,7 @@
 * support@paybox.com so we can mail you a copy immediately.
 *
 *  @category  Module / payments_gateways
-*  @version   3.0.11
+*  @version   3.0.14
 *  @author    BM Services <contact@bm-services.com>
 *  @copyright 2012-2017 Verifone e-commerce
 *  @license   http://opensource.org/licenses/OSL-3.0
@@ -146,7 +146,7 @@ class PayboxController extends PayboxAbstract
 
                 // [3.0.11] Mixed payment fixes on IPN calls
                 // ANCV: Sleep on CB for next payments
-                if ('LIMOCB' == $cardType) {
+                if ('LIMOCB' == $params['cardType']) {
                     sleep(6);
                 }
 
@@ -167,7 +167,7 @@ class PayboxController extends PayboxAbstract
                     $indexData = explode('-', $params['paymentIndex']);
                     if (1 < count($indexData)) {
                         // Check if several payments are expected
-                        if ('1' !== $indexData[1]) {
+                        if ('1' <= $indexData[1]) {
                             $type = 'mixed';
 
                             // [3.0.11] Check if it is an additionnal payment to make it processed after the real mixed one
