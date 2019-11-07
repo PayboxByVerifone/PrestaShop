@@ -1,5 +1,12 @@
 # Change Log
 
+## [3.0.14] 2019-10-31
+### Ajouts & Corrections
+- Ajout de la limite haute pour le 3DS
+- Correction du paiement partiel systématique
+- Correction du temps de validation des commandes au retour sur la boutique  
+- Correction de problèmes mineurs de variables smarty au retour sur la boutique
+
 ## [3.0.13] 2019-10-03
 ### Modifications
 - Compatibilité Prestashop 1.7.6.x

@@ -13,7 +13,7 @@
 * support@paybox.com so we can mail you a copy immediately.
 *
 *  @category  Module / payments_gateways
-*  @version   3.0.11
+*  @version   3.0.14
 *  @author    BM Services <contact@bm-services.com>
 *  @copyright 2012-2017 Verifone e-commerce
 *  @license   http://opensource.org/licenses/OSL-3.0
@@ -63,12 +63,17 @@ $_MODULE['<{epayment}prestashop>payboxadminconfig_8c9515933afdb1fef5576f9762d46f
 $_MODULE['<{epayment}prestashop>payboxadminconfig_d11fd4c8f5fe958762354b8a25929977'] = 'Attention : votre banque peut vous imposer 3-D Secure. Assurez-vous que le paramétrage est cohérent entre votre banque, Verifone e-commerce et le module PrestaShop.';
 $_MODULE['<{epayment}prestashop>payboxadminconfig_321f05a33783b5041bb4fb5421e037f5'] = 'Attention : certaines banques interdisent le débrayage de 3-D Secure. Assurez-vous du paramétrage 3-D Secure de votre contrat auprès de votre banque et de Verifone e-commerce.';
 $_MODULE['<{epayment}prestashop>payboxadminconfig_7f8a5be95e99a1ea28a55035c43c6f00'] = 'Montant minimum d\'une commande 3-D Secure';
+$_MODULE['<{epayment}prestashop>payboxadminconfig_7f8a3b608cf19e9515cd34ae8d144917'] = 'Montant maximum d\'une commande 3-D Secure';
 $_MODULE['<{epayment}prestashop>payboxadminconfig_969a50589f54b6bcad0b4802ef5233f9'] = 'Laisser vide pour que tous les paiements utilisent l’authentification 3-D Secure';
 $_MODULE['<{epayment}prestashop>payboxadminconfig_e210477743d81dcd83a5fa685e20fd9a'] = 'Paiement en 3 fois';
 $_MODULE['<{epayment}prestashop>payboxadminconfig_405b68b3a85d209434cab0a35569c9a4'] = 'Assurez-vous de la solution souscrite avant de procéder au paramétrage.';
 $_MODULE['<{epayment}prestashop>payboxadminconfig_528e715852c62e5b2d82a6d51e34709a'] = 'Montant minimum d\'une commande payable en 3 fois';
 $_MODULE['<{epayment}prestashop>payboxadminconfig_7fa99f27afd2bbaef84c4ab4e7f114aa'] = 'Laisser vide si il n\'y a pas de minimum de commande.';
 $_MODULE['<{epayment}prestashop>payboxadminconfig_571f4a950ba77153f2d6abc85f57c61c'] = 'Statut après échéances 1 et 2';
+$_MODULE['<{epayment}prestashop>payboxadminconfig_7d6e9d0c1c5bc16c3d941d9d13c9210d'] = '2x,3x ou 4x par carte bancaire ';
+$_MODULE['<{epayment}prestashop>payboxadminconfig_78dae337e653cc89cbf1d468d88203fd'] = '2x,3x ou 4x  sans frais par carte bancaire ';
+$_MODULE['<{epayment}prestashop>payboxadminconfig_faeffba7fe70da0f505048f48e5f0ebd'] = '2x,3x ou 4x par carte bancaire ';
+$_MODULE['<{epayment}prestashop>payboxadminconfig_df13ea7ccbb46ec3b8face6b11430036'] = '2x,3x ou 4x Sans frais par carte bancaire ';
 $_MODULE['<{epayment}prestashop>payboxadminconfig_f3069433a4a7096ccf7a56aebfcc8bbd'] = 'Statut après la dernière échéance';
 $_MODULE['<{epayment}prestashop>payboxadminconfig_d4dccb8ca2dac4e53c01bd9954755332'] = 'Enregistrer les paramètres';
 $_MODULE['<{epayment}prestashop>payboxadminconfig_93465c17406ed4dde0998bdcc5f9fde4'] = 'Ajouter un moyen de paiement';
