@@ -682,8 +682,7 @@ class PayboxHelper extends PayboxAbstract
             case 1:
                 if ($this->getConfig()->get3DSEnabled()) {
                     $tdsAmount = $this->getConfig()->get3DSAmount();
-                    $maxAmount = $this->getConfig()->get3DSMaxAmount();
-                    $enable3ds = empty($tdsAmount) || ($orderAmount >= $tdsAmount && $orderAmount <= $maxAmount);
+                    $enable3ds = empty($tdsAmount) || $orderAmount >= $tdsAmount;
                 }
                 break;
 
@@ -971,17 +970,30 @@ class PayboxHelper extends PayboxAbstract
         return Db::getInstance()->executeS($sql);
     }
 
-    public function getActivePaymentMethods()
+    public function getActivePaymentMethods($cart = null)
     {
         $allMethods = $this->getAllPaymentMethods();
         $methods = array();
+		$amountScale = $this->_currencyDecimals[$this->getCurrency($cart)];
+		$amountScale = pow(10, $amountScale);
+		$max = round(floatval($this->getConfig()->getMaxAmount()));
+		$max = intval(sprintf('%03d', $max*$amountScale));
+		$min = round(floatval($this->getConfig()->getMinAmount()));
+		$min = intval(sprintf('%03d', $min*$amountScale));
+		$cartAmount = round(floatval($cart->getOrderTotal()));
+		$cartAmount = intval(sprintf('%03d', $cartAmount * $amountScale));
+		$limited = false;
+		if($min>0 || $max>0)$limited = true;
         foreach ($allMethods as $method) {
             $id = $method['id_card'];
             $active = Configuration::get('PAYBOX_CARD_ENABLED_'.$id);
+			if($limited && (($cartAmount >= $max) || ($cartAmount <= $min))){
+				$active = false;
+			}
             $label = Configuration::get('PAYBOX_CARD_LABEL_'.$id);
-            if ($active !== false) {
-                $method['active'] = $active;
-            }
+            if ($active == false) {
+                $method['active'] = 0;
+			}
             if ($label !== false) {
                 $method['label'] = $label;
             }
@@ -1182,12 +1194,12 @@ class PayboxHelper extends PayboxAbstract
             $res = (boolean) openssl_verify($matches[1], $signature, $pubkey);
 
             if (!$res) {
-                if (preg_match('#^fc=module&module=epayment&controller=validation&t=[s3]&a=[cfrsij]&(.*)&K=(.*)$#', $data, $matches)) {
+                if (preg_match('#^t=[s3]&a=[cfrsij]&(.*)&K=(.*)$#', $data, $matches)) {
                     $signature = base64_decode(urldecode($matches[2]));
                     $res = (boolean) openssl_verify($matches[1], $signature, $pubkey);
                 }
 
-                if (preg_match('#^fc=module&module=epayment&controller=validation&t=[s3]&a=[cfrsij]&C=IDEAL&P=PREPAYEE&(.*)&K=(.*)$#', $data, $matches)) {
+                if (preg_match('#^t=[s3]&a=[cfrsij]&C=IDEAL&P=PREPAYEE&(.*)&K=(.*)$#', $data, $matches)) {
                     $signature = base64_decode(urldecode($matches[2]));
                     $res = (boolean) openssl_verify($matches[1], $signature, $pubkey);
                 }

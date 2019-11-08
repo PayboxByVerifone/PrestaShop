@@ -242,7 +242,7 @@ class Epayment extends PaymentModule
         global $smarty, $cart, $cookie;
 
         // Load methods
-        $methods = $this->getHelper()->getActivePaymentMethods();
+        $methods = $this->getHelper()->getActivePaymentMethods($cart);
         // [3.0.9] Remove filtering
         // $debitTypeForCard = $this->getConfig()->getDebitTypeForCard();
         $recurringCards = array();
@@ -324,10 +324,11 @@ class Epayment extends PaymentModule
             return;
         }
 
+		global $cart;
         $paymentOptions = array();
 
         // Load methods
-        $methods = $this->getHelper()->getActivePaymentMethods();
+        $methods = $this->getHelper()->getActivePaymentMethods($cart);
         // [3.0.9] Remove filtering
         // $debitTypeForCard = $this->getConfig()->getDebitTypeForCard();
         $recurringCards = array();
@@ -407,11 +408,27 @@ class Epayment extends PaymentModule
         if (!$this->active) {
             return;
         }
-
+		global $cart;
         $paymentOptions = array();
 
+		$error = Tools::getValue('payboxReason');
+		if($error){
+			$messageHtml = "<p class='alert alert-danger'><b>";
+			switch($error){
+				case "cancel":
+					$messageHtml .=  $this->l('The payment was cancelled.');
+					break;
+				case "error":
+					$messageHtml .=  $this->l('Your payment was refused, please choose another payment method.');
+					break;
+				default:break;
+			}
+			$messageHtml .=  "</b></p>";
+			echo $messageHtml;
+		}
+
         // Load methods
-        $methods = $this->getHelper()->getActivePaymentMethods();
+        $methods = $this->getHelper()->getActivePaymentMethods($cart);
         // [3.0.9] Remove filtering
         // $debitTypeForCard = $this->getConfig()->getDebitTypeForCard();
         $recurringCards = array();

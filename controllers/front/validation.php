@@ -32,11 +32,15 @@
 *  @license   http://opensource.org/licenses/OSL-3.0
 *  @link      http://www.paybox.com/
  */
-class PayboxValidationModuleFrontController extends ModuleFrontController
+class EpaymentValidationModuleFrontController extends ModuleFrontController
 {
 	/**
      * @see FrontController::postProcess()
      */
+	public function initContent(){
+		$this->setTemplate('module:epayment/views/templates/front/validation.tpl');
+	}
+
     public function postProcess()
     {
 		$action = isset($_GET['a']) ? $_GET['a'] : null;

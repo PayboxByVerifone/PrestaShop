@@ -271,7 +271,6 @@ EOF;
 $('#PAYBOX_3DS').change(function() {
     var alert = $('#PAYBOX_3DS_alert');
     var npt = $('#PAYBOX_3DS_MIN_AMOUNT_container');
-    var npt2 = $('#PAYBOX_3DS_MAX_AMOUNT_container');
     if (this.value == 1) {
         alert.show('normal');
         npt.show('normal');
@@ -307,15 +306,26 @@ EOF;
             $this->getConfig()->get3DSEnabled() == '1'
         );
         
-        // 3-D Secure: maximal amount
+        // minimal amount
         $w->formText(
-            'PAYBOX_3DS_MAX_AMOUNT',
-            $this->l('Maximum amount order 3D-Secure'),
-            $this->getConfig()->get3DSMaxAmount(),
-            $this->l('Leave empty for all payments using the 3D-Secure authentication'),
+            'PAYBOX_MIN_AMOUNT',
+            $this->l('Minimum amount order'),
+            $this->getConfig()->getMinAmount(),
+            $this->l('Set the minimum order amount to display of the payment mean'),
             3,
             null,
-            $this->getConfig()->get3DSEnabled() == '1'
+            true
+            );
+
+        // maximal amount
+        $w->formText(
+            'PAYBOX_MAX_AMOUNT',
+            $this->l('Maximum amount order'),
+            $this->getConfig()->getMaxAmount(),
+            $this->l('Set the maximum order amount to display of the payment mean'),
+            3,
+            null,
+            true
             );
 
         // Threetime: enable/disable
