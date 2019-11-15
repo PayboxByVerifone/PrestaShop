@@ -12,7 +12,7 @@
 * support@paybox.com so we can mail you a copy immediately.
 *
 *  @category  Module / payments_gateways
-*  @version   3.0.1
+*  @version   3.0.15
 *  @author    BM Services <contact@bm-services.com>
 *  @copyright 2012-2017 Verifone e-commerce
 *  @license   http://opensource.org/licenses/OSL-3.0
@@ -22,4 +22,4 @@
 <p>Your order on <strong class="bold">{$shop_name}</strong> is complete.</p>
 <p>You have chosen the <img src="{$base_dir_ssl}modules/epayment/img/epayment-xs.png" /> method.</p>
 <p>Your order will be sent very soon.</p>
-<p>For any question or for further information, please contact our <a href="{$base_dir_ssl}contact-form.php">customer support</a>.</p>
+<p>For any question or for further information, please contact our <a href="{$link->getPageLink('contact')}">customer support</a>.</p>

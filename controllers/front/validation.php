@@ -26,14 +26,17 @@
 
 /**
 *  @category  Module / payments_gateways
-*  @version   3.0.13
+*  @version   3.0.15
 *  @author    BM Services <contact@bm-services.com>
 *  @copyright 2012-2017 Verifone e-commerce
 *  @license   http://opensource.org/licenses/OSL-3.0
 *  @link      http://www.paybox.com/
  */
-class PayboxValidationModuleFrontController extends ModuleFrontController
+class GenericPaymentValidationModuleFrontController extends ModuleFrontController
 {
+    public function initContent(){
+        $this->setTemplate('module:etransactions/views/templates/front/validation.tpl');
+    }
 	/**
      * @see FrontController::postProcess()
      */

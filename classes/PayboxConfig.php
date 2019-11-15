@@ -13,7 +13,7 @@
 * support@paybox.com so we can mail you a copy immediately.
 *
 *  @category  Module / payments_gateways
-*  @version   3.0.14
+*  @version   3.0.8
 *  @author    BM Services <contact@bm-services.com>
 *  @copyright 2012-2017 Verifone e-commerce
 *  @license   http://opensource.org/licenses/OSL-3.0
@@ -32,7 +32,8 @@ class PayboxConfig
     private $_defaults = array(
         'PAYBOX_3DS'                            => 1,
         'PAYBOX_3DS_MIN_AMOUNT'                 => '',
-        'PAYBOX_3DS_MAX_AMOUNT'                 => '',
+        'PAYBOX_MIN_AMOUNT'                     => '150',
+        'PAYBOX_MAX_AMOUNT'                     => '2000',
         'PAYBOX_DEBUG_MODE'                     => 'FALSE',
         'PAYBOX_HASH'                           => 'SHA512',
         'PAYBOX_IDENTIFIANT'                    => '3262411',
@@ -180,9 +181,14 @@ class PayboxConfig
         return $this->_get('PAYBOX_3DS_MIN_AMOUNT');
     }
     
-    public function get3DSMaxAmount()
+    public function getMinAmount()
     {
-        return $this->_get('PAYBOX_3DS_MAX_AMOUNT');
+        return $this->_get('ETRANS_MIN_AMOUNT');
+    }
+    
+    public function getMaxAmount()
+    {
+        return $this->_get('ETRANS_MAX_AMOUNT');
     }
 
     public function getAllowedIps()

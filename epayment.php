@@ -13,7 +13,7 @@
 * support@paybox.com so we can mail you a copy immediately.
 *
 *  @category  Module / payments_gateways
-*  @version   3.0.14
+*  @version   3.0.15
 *  @author    BM Services <contact@bm-services.com>
 *  @copyright 2012-2017 Verifone e-commerce
 *  @license   http://opensource.org/licenses/OSL-3.0
@@ -46,7 +46,7 @@ class Epayment extends PaymentModule
 
         $this->name = 'epayment';
         $this->tab = 'payments_gateways';
-        $this->version = '3.0.14';
+        $this->version = '3.0.15';
         $this->author = 'Verifone e-commerce';
         $this->bootstrap = true;
 
@@ -56,6 +56,10 @@ class Epayment extends PaymentModule
 
         $this->displayName = 'Verifone e-commerce';
         $this->description = $this->l('In one integration, offer many payment methods, get a customized secure payment page, multi-lingual and multi-currency and offer debit on delivery or in 3 installments without charges for your customers.');
+        
+        if ($this->displayName == 'Sofinco') {
+            $this->description = $this->l('Allow your customers to pay in 2, 3 or 4 times through an easy, fast and effective subscription, increasing your cart average and conversion rate. This is for private individuals with a french credit card.');
+        }
         $this->controllers = array('redirect','validation');
     }
 
@@ -236,13 +240,16 @@ class Epayment extends PaymentModule
 
     /**
      * On payment selection page generation
+     * @version 3.0.14
+     * @param $params
+     * @return $html
      */
     public function hookPayment($params)
     {
         global $smarty, $cart, $cookie;
 
         // Load methods
-        $methods = $this->getHelper()->getActivePaymentMethods();
+        $methods = $this->getHelper()->getActivePaymentMethods($cart);
         // [3.0.9] Remove filtering
         // $debitTypeForCard = $this->getConfig()->getDebitTypeForCard();
         $recurringCards = array();
@@ -266,7 +273,7 @@ class Epayment extends PaymentModule
                 'payment' => $method['type_payment'],
                 'card' => $method['type_card'],
                 'label' => $method['label'],
-                'url' => $this->getPath().'?'.$params,
+                'url' => $this->getRedirPath().'&'.$params,
                 'image' => $this->getMethodImageUrl($method['type_card']),
             );
             $cards[] = $card;
@@ -318,16 +325,22 @@ class Epayment extends PaymentModule
         return $html;
     }
 
+    /**
+     * @version 3.0.14
+     * @param unknown $params
+     * @return $paymentOptions
+     */
     public function hookDisplayPaymentEU($params)
     {
         if (!$this->active) {
             return;
         }
 
+        global $cart;
         $paymentOptions = array();
 
         // Load methods
-        $methods = $this->getHelper()->getActivePaymentMethods();
+        $methods = $this->getHelper()->getActivePaymentMethods($cart);
         // [3.0.9] Remove filtering
         // $debitTypeForCard = $this->getConfig()->getDebitTypeForCard();
         $recurringCards = array();
@@ -397,7 +410,7 @@ class Epayment extends PaymentModule
      * 3.0.11 Add logo
      *
      * @since    3.0.5
-     * @version  3.0.11
+     * @version  3.0.14
      * @param    array $params
      * @return   PrestaShop\PrestaShop\Core\Payment\PaymentOption[]
      */
@@ -408,10 +421,27 @@ class Epayment extends PaymentModule
             return;
         }
 
+        global $cart;
         $paymentOptions = array();
 
+        $error = Tools::getValue('payboxReason');
+        if($error){
+            $messageHtml = "<p class='alert alert-danger'><b>";
+            switch($error){
+                case "cancel":
+                    $messageHtml .=  $this->l('The payment was cancelled.');
+                    break;
+                case "error":
+                    $messageHtml .=  $this->l('Your payment was refused, please choose another payment method.');
+                    break;
+                default:break;
+            }
+            $messageHtml .=  "</b></p>";
+            echo $messageHtml;
+        }
+        
         // Load methods
-        $methods = $this->getHelper()->getActivePaymentMethods();
+        $methods = $this->getHelper()->getActivePaymentMethods($cart);
         // [3.0.9] Remove filtering
         // $debitTypeForCard = $this->getConfig()->getDebitTypeForCard();
         $recurringCards = array();
@@ -529,15 +559,17 @@ class Epayment extends PaymentModule
             return;
         }
 
+        $version = version_compare(_PS_VERSION_, '1.6.1.24', '>') ? "17":"";
+        
         $lang = $this->context->language;
         if (!empty($lang) && !empty($lang->iso_code)) {
-            $template = $this->getTemplatePath('payment_return.' . $lang->iso_code . '.tpl');
+            $template = $this->getTemplatePath('payment_return'. $version. '.' . $lang->iso_code . '.tpl');
             if (!is_null($template)) {
-                return $this->fetchTemplate('payment_return.' . $lang->iso_code . '.tpl');
+                return $this->fetchTemplate('payment_return'. $version. '.' . $lang->iso_code . '.tpl');
             }
         }
 
-        return $this->fetchTemplate('payment_return.tpl');
+        return $this->fetchTemplate('payment_return'. $version. '.tpl');
     }
 
     /**
