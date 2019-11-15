@@ -1,5 +1,13 @@
 # Change Log
 
+## [3.0.15] 2019-11-15
+### Ajouts & Corrections
+- Ajout des limites haute et basse pour la méthode de paiement
+- Suppression de la limite haute 3DS
+- Correction des redirections du module
+- Compatibilité Prestashop 1.5.x à 1.7.6.1
+
+
 ## [3.0.14] 2019-10-31
 ### Ajouts & Corrections
 - Ajout de la limite haute pour le 3DS
