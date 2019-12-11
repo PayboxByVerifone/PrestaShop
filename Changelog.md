@@ -1,5 +1,9 @@
 # Change Log
 
+## [3.0.15] 2019-12-11
+### Ajouts & Corrections
+- correction controller validation (erreur 500 on ipn)
+
 ## [3.0.14] 2019-10-31
 ### Ajouts & Corrections
 - Ajout de la limite haute pour le 3DS

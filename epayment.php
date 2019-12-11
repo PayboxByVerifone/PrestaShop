@@ -46,7 +46,7 @@ class Epayment extends PaymentModule
 
         $this->name = 'epayment';
         $this->tab = 'payments_gateways';
-        $this->version = '3.0.14';
+        $this->version = '3.0.15';
         $this->author = 'Verifone e-commerce';
         $this->bootstrap = true;
 
