@@ -12,14 +12,14 @@
 * support@paybox.com so we can mail you a copy immediately.
 *
 *  @category  Module / payments_gateways
-*  @version   3.0.14
+*  @version   3.0.15
 *  @author    BM Services <contact@bm-services.com>
-*  @copyright 2012-2017 Verifone e-commerce
+*  @copyright 2012-2019 Verifone e-commerce
 *  @license   http://opensource.org/licenses/OSL-3.0
 *  @link      http://www.paybox.com/
 *}
 
-<p>Votre commande sur <strong class="bold">{$shop_name}</strong> est validée.</p>
-<p>Vous avez choisi la méthode de paiement <img src="{$base_dir_ssl}modules/epayment/img/epayment-xs.png" />.</p>
-<p>Votre commande vous sera envoyée dans les plus brefs délais.</p>
-<p>Pour toute question ou plus d'information, merci de contacter notre <a href="{$link->getPageLink('contact')}">Service Client</a>.</p>
+<p>Your order on <strong class="bold">{$shop.name}</strong> is complete.</p>
+<p>You have chosen the <img src="{$urls.base_url}modules/epayment/img/epayment-xs.png" /> method.</p>
+<p>Your order will be sent very soon.</p>
+<p>For any question or for further information, please contact our <a href="{$link->getPageLink('contact')}">customer support</a>.</p>

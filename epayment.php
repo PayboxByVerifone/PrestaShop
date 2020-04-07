@@ -13,7 +13,7 @@
 * support@paybox.com so we can mail you a copy immediately.
 *
 *  @category  Module / payments_gateways
-*  @version   3.0.14
+*  @version   3.0.17
 *  @author    BM Services <contact@bm-services.com>
 *  @copyright 2012-2017 Verifone e-commerce
 *  @license   http://opensource.org/licenses/OSL-3.0
@@ -46,7 +46,7 @@ class Epayment extends PaymentModule
 
         $this->name = 'epayment';
         $this->tab = 'payments_gateways';
-        $this->version = '3.0.15';
+        $this->version = '3.0.17';
         $this->author = 'Verifone e-commerce';
         $this->bootstrap = true;
 
@@ -266,7 +266,8 @@ class Epayment extends PaymentModule
                 'payment' => $method['type_payment'],
                 'card' => $method['type_card'],
                 'label' => $method['label'],
-                'url' => $this->getPath().'?'.$params,
+                //'url' => $this->getPath().'?'.$params,
+				'url' => $this->getRedirPath().'&'.$params,										   
                 'image' => $this->getMethodImageUrl($method['type_card']),
             );
             $cards[] = $card;
@@ -545,18 +546,18 @@ class Epayment extends PaymentModule
         if (empty($details)) {
             return;
         }
+		$version = version_compare(_PS_VERSION_, '1.6.1.24', '>') ? "17":"";
 
         $lang = $this->context->language;
         if (!empty($lang) && !empty($lang->iso_code)) {
-            $template = $this->getTemplatePath('payment_return.' . $lang->iso_code . '.tpl');
+            $template = $this->getTemplatePath('payment_return'. $version. '.' . $lang->iso_code . '.tpl');
             if (!is_null($template)) {
-                return $this->fetchTemplate('payment_return.' . $lang->iso_code . '.tpl');
+                return $this->fetchTemplate('payment_return'. $version. '.' . $lang->iso_code . '.tpl');
             }
         }
 
-        return $this->fetchTemplate('payment_return.tpl');
+        return $this->fetchTemplate('payment_return'. $version. '.tpl');
     }
-
     /**
      * On order state change, do capture if needed
      */

@@ -1,8 +1,17 @@
 # Change Log
 
-## [3.0.15] 2019-12-11
+## [3.0.17] 2020-02-24
 ### Ajouts & Corrections
-- correction controller validation (erreur 500 on ipn)
+- correcion compatibilité ps 1.7 (erreur 500): référence etransactions erronée
+Thx@Sophie 
+
+## [3.0.16] 2019-12-18
+### Ajouts & Corrections
+- correcion compatibilité ps 1.6 (erreur 500)
+
+## [3.0.15] 2019-11-29
+### Ajouts & Corrections
+- correcion compatibilité et divers bugfix
 
 ## [3.0.14] 2019-10-31
 ### Ajouts & Corrections

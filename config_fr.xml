@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<module>
+	<name>epayment</name>
+	<displayName><![CDATA[Verifone e-commerce]]></displayName>
+	<version><![CDATA[3.0.17]]></version>
+	<description><![CDATA[En une seule int&eacute;gration, offrez plusieurs m&eacute;thodes de paiement, b&eacute;n&eacute;ficiez d&#039;une page de paiement personalis&eacute;e et s&eacute;curis&eacute;e, multi-langues et multi-devises et offrez le paiement &agrave; la livraison ou en 3 fois sans frais pour vos clients.]]></description>
+	<author><![CDATA[Verifone e-commerce]]></author>
+	<tab><![CDATA[payments_gateways]]></tab>
+	<is_configurable>1</is_configurable>
+	<need_instance>1</need_instance>
+	<limited_countries></limited_countries>
+</module>

@@ -65,8 +65,14 @@ class PayboxEncrypt
             $key .= substr($key, 0, 24 - strlen($key));
         }
 
-        if(function_exists('mcrypt_encrypt')) {
-            // First encode data to base64 (see end of descrypt)
+        if(function_exists('openssl_encrypt')) {
+            $ivlen = openssl_cipher_iv_length($cipher='AES-128-CBC');
+            $iv = openssl_random_pseudo_bytes($ivlen);
+            $ciphertext_raw = openssl_encrypt($data, $cipher, $key, $options=OPENSSL_RAW_DATA, $iv);
+            $hmac = hash_hmac('sha256', $ciphertext_raw, $key, $as_binary=true);
+            $result = base64_encode($iv.$hmac.$ciphertext_raw);
+        } elseif(function_exists('mcrypt_module_open')) {
+             // First encode data to base64 (see end of descrypt)
             $data = base64_encode($data);
 
             // Prepare mcrypt
@@ -83,12 +89,6 @@ class PayboxEncrypt
             // Encode (to avoid data loose when saved to database or
             // any storage that does not support null chars)
             $result = base64_encode($result);
-        } elseif(function_exists('openssl_encrypt')) {
-            $ivlen = openssl_cipher_iv_length($cipher='AES-128-CBC');
-            $iv = openssl_random_pseudo_bytes($ivlen);
-            $ciphertext_raw = openssl_encrypt($data, $cipher, $key, $options=OPENSSL_RAW_DATA, $iv);
-            $hmac = hash_hmac('sha256', $ciphertext_raw, $key, $as_binary=true);
-            $result = base64_encode($iv.$hmac.$ciphertext_raw);
         } else {
             $result = $data;
         }
@@ -119,7 +119,43 @@ class PayboxEncrypt
             $key .= substr($key, 0, 24 - strlen($key));
         }
 
-        if(function_exists('mcrypt_encrypt')) {
+        if(function_exists('openssl_encrypt')) {
+            $c = base64_decode($data);
+            $ivlen = openssl_cipher_iv_length($cipher='AES-128-CBC');
+            $iv = substr($c, 0, $ivlen);
+            $hmac = substr($c, $ivlen, $sha2len=32);
+            $ciphertext_raw = substr($c, $ivlen+$sha2len);
+            $result = openssl_decrypt($ciphertext_raw, $cipher, $key, $options=OPENSSL_RAW_DATA, $iv);
+
+            //PHP 5.6+ timing attack safe comparison
+            $calcmac = hash_hmac('sha256', $ciphertext_raw, $key, $as_binary=true);
+            if (!hash_equals($hmac, $calcmac)) {
+                $result = '';
+            }
+			if(!$result && function_exists('mcrypt_encrypt')){
+				// First decode encrypted message (see end of encrypt)
+				$data = base64_decode($data);
+
+				// Prepare mcrypt
+				$td = mcrypt_module_open(MCRYPT_3DES, '', MCRYPT_MODE_ECB, '');
+
+				// Init vector
+				$size = mcrypt_enc_get_iv_size($td);
+				$iv = mcrypt_create_iv($size, MCRYPT_RAND);
+				mcrypt_generic_init($td, $key, $iv);
+
+				// Decrypt
+				$result = mdecrypt_generic($td, $data);
+
+				// Remove any null char (data is base64 encoded so no data loose)
+				$result = rtrim($result, "\0");
+
+				// Decode data
+				$result = base64_decode($result);
+				
+			}
+		}
+		elseif(function_exists('mcrypt_encrypt')) {
             // First decode encrypted message (see end of encrypt)
             $data = base64_decode($data);
 
@@ -139,19 +175,6 @@ class PayboxEncrypt
 
             // Decode data
             $result = base64_decode($result);
-        } elseif(function_exists('openssl_encrypt')) {
-            $c = base64_decode($data);
-            $ivlen = openssl_cipher_iv_length($cipher='AES-128-CBC');
-            $iv = substr($c, 0, $ivlen);
-            $hmac = substr($c, $ivlen, $sha2len=32);
-            $ciphertext_raw = substr($c, $ivlen+$sha2len);
-            $result = openssl_decrypt($ciphertext_raw, $cipher, $key, $options=OPENSSL_RAW_DATA, $iv);
-
-            //PHP 5.6+ timing attack safe comparison
-            $calcmac = hash_hmac('sha256', $ciphertext_raw, $key, $as_binary=true);
-            if (!hash_equals($hmac, $calcmac)) {
-                $result = '';
-            }
         } else {
             $result = $data;
         }

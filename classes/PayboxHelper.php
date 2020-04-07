@@ -989,6 +989,8 @@ class PayboxHelper extends PayboxAbstract
             $active = Configuration::get('PAYBOX_CARD_ENABLED_'.$id);
 			if($limited && (($cartAmount >= $max) || ($cartAmount <= $min))){
 				$active = false;
+			}else{
+				$active = true;
 			}
             $label = Configuration::get('PAYBOX_CARD_LABEL_'.$id);
             if ($active == false) {
@@ -1194,12 +1196,12 @@ class PayboxHelper extends PayboxAbstract
             $res = (boolean) openssl_verify($matches[1], $signature, $pubkey);
 
             if (!$res) {
-                if (preg_match('#^t=[s3]&a=[cfrsij]&(.*)&K=(.*)$#', $data, $matches)) {
+                if (preg_match('#^fc=module&module=epayment&controller=validation&t=[s3]&a=[cfrsij]&(.*)&K=(.*)$#', $data, $matches)) {
                     $signature = base64_decode(urldecode($matches[2]));
                     $res = (boolean) openssl_verify($matches[1], $signature, $pubkey);
                 }
 
-                if (preg_match('#^t=[s3]&a=[cfrsij]&C=IDEAL&P=PREPAYEE&(.*)&K=(.*)$#', $data, $matches)) {
+                if (preg_match('#^fc=module&module=epayment&controller=validation&t=[s3]&a=[cfrsij]&C=IDEAL&P=PREPAYEE&(.*)&K=(.*)$#', $data, $matches)) {
                     $signature = base64_decode(urldecode($matches[2]));
                     $res = (boolean) openssl_verify($matches[1], $signature, $pubkey);
                 }

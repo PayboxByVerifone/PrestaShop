@@ -2,7 +2,7 @@
   "name": "verifone/prestashop",
   "description": "Verifone e-commerce - PrestaShop integration module",
   "type": "prestashop-module",
-  "version": "3.0.15",
+  "version": "3.0.17",
   "homepage": "https://github.com/PayboxByVerifone/PrestaShop",
   "license": "AFL - Academic Free License (AFL 3.0)",
   "require": {
