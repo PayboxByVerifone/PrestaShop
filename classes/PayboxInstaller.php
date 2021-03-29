@@ -95,7 +95,7 @@ class PayboxInstaller
                 );
             }
         }
-
+        
         return array(
             'status' => true
         );
@@ -126,6 +126,7 @@ class PayboxInstaller
             `pays` varchar(255) NOT NULL,
             `ip` varchar(255) NOT NULL,
             `secure` varchar(255) NOT NULL,
+            `3ds_version` varchar(255) NULL,
             `date` varchar(255) NOT NULL,
             `refund_amount` int(10) NOT NULL,
             PRIMARY KEY (`id_order`))
@@ -302,7 +303,7 @@ class PayboxInstaller
             }
             Configuration::updateValue('PAYBOX_WEB_CASH_VALIDATION', (int)$orderState->id);
         }
-/*
+        /*
         if (!$this->_isValidState(Configuration::get('PAYBOX_KWIXO'))) {
             $orderState = new OrderState();
             $orderState->name = array();
@@ -329,7 +330,7 @@ class PayboxInstaller
             }
             Configuration::updateValue('PAYBOX_KWIXO', (int)$orderState->id);
         }
-*/
+        */
         return true;
     }
 
@@ -342,7 +343,7 @@ class PayboxInstaller
     private function _copyOrderStateImage($orderStateId)
     {
         $src = dirname(dirname(__FILE__)).'/img/orderState.gif';
-        $dst = dirname(dirname(__FILE__)).'/../../img/os/'.((int)$orderStateId).'.gif';
+        $dst = _PS_IMG_DIR_ . 'os/'.(int)$orderStateId.'.gif';
         return copy($src, $dst);
     }
 
@@ -404,7 +405,7 @@ class PayboxInstaller
                 'debit_differe' => 1,
                 'remboursement' => 1,
                 'mixte' => 0,
-                '3ds' => 1,
+                '3ds' => 2,
             ),
             array(
                 'type_payment' => 'CARTE',
@@ -416,7 +417,7 @@ class PayboxInstaller
                 'debit_differe' => 1,
                 'remboursement' => 1,
                 'mixte' => 0,
-                '3ds' => 1,
+                '3ds' => 2,
             ),
             array(
                 'type_payment' => 'CARTE',
@@ -428,7 +429,7 @@ class PayboxInstaller
                 'debit_differe' => 1,
                 'remboursement' => 1,
                 'mixte' => 0,
-                '3ds' => 1,
+                '3ds' => 2,
             ),
             array(
                 'type_payment' => 'CARTE',
@@ -440,7 +441,7 @@ class PayboxInstaller
                 'debit_differe' => 1,
                 'remboursement' => 0,
                 'mixte' => 0,
-                '3ds' => 1,
+                '3ds' => 2,
             ),
             array(
                 'type_payment' => 'CARTE',
@@ -464,7 +465,7 @@ class PayboxInstaller
                 'debit_differe' => 1,
                 'remboursement' => 1,
                 'mixte' => 0,
-                '3ds' => 1,
+                '3ds' => 2,
             ),
             array(
                 'type_payment' => 'PAYPAL',
@@ -500,7 +501,7 @@ class PayboxInstaller
                 'debit_differe' => 0,
                 'remboursement' => 0,
                 'mixte' => 0,
-                '3ds' => 1,
+                '3ds' => 2,
             ),
             array(
                 'type_payment' => 'CARTE',
@@ -548,7 +549,7 @@ class PayboxInstaller
                 'debit_differe' => 1,
                 'remboursement' => 1,
                 'mixte' => 0,
-                '3ds' => 1,
+                '3ds' => 2,
             ),
             array(
                 'type_payment' => 'CARTE',
@@ -780,7 +781,7 @@ class PayboxInstaller
         // Configuration::deleteByName('PAYBOX_ID_ORDER_STATE_NX');
         // Configuration::deleteByName('PAYBOX_RECEIVE_PAY');
         // Configuration::deleteByName('PAYBOX_STATE_MIN_CAPTURE');
-
+        
         return true;
     }
 
@@ -798,7 +799,7 @@ class PayboxInstaller
             WHERE TABLE_SCHEMA = "'._DB_NAME_.'" AND TABLE_NAME = "'.$table.'" AND COLUMN_NAME = "'.$column.'"');
         return ($result !== false);
     }
-
+    
     private function configurationToKeep()
     {
         return array(

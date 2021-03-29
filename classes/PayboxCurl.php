@@ -13,7 +13,7 @@
 * support@paybox.com so we can mail you a copy immediately.
 *
 *  @category  Module / payments_gateways
-*  @version   3.0.13
+*  @version   2.0.0
 *  @author    BM Services <contact@bm-services.com>
 *  @copyright 2012-2017 Verifone e-commerce
 *  @license   http://opensource.org/licenses/OSL-3.0
@@ -36,7 +36,7 @@ class PayboxCurl
     public function get($url)
     {
         $ch = curl_init();
-        
+
         if ($this->getFollowRedirect() === false) {
             curl_setopt($ch, CURLOPT_MAXREDIRS, 0);
         }
@@ -53,9 +53,9 @@ class PayboxCurl
         curl_setopt($ch, CURLOPT_HEADER, true);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
         curl_setopt($ch, CURLOPT_CAINFO, dirname(__FILE__).'/curl-ca-bundle.crt');
-        
+
         $result = curl_exec($ch);
-        
+
         if (curl_errno($ch)) {
             throw new Exception(curl_error($ch));
         }
@@ -70,12 +70,12 @@ class PayboxCurl
         $headers = preg_split("#(\r\n|\r|\n)#", $parts[0]);
         $status = array_shift($headers);
 
-        if (!preg_match('#^HTTP/(1\.0|1\.1|2) ([0-9]{3}) (.*)$#i', $status, $matches)) {
+        if (!preg_match('#^HTTP/[0-9]\.[0-9] ([0-9]{3}) (.*)$#i', $status, $matches)) {
             throw new Exception('Invalid status returned by remote server');
         }
-        $code = intval($matches[2]);
-        $status = $matches[3];
-        
+        $code = intval($matches[1]);
+        $status = $matches[2];
+
         return array(
             'code' => $code,
             'status' => $status,

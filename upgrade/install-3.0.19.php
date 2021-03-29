@@ -13,7 +13,7 @@
 * support@paybox.com so we can mail you a copy immediately.
 *
 *  @category  Module / payments_gateways
-*  @version   2.1.0
+*  @version   3.0.19
 *  @author    BM Services <contact@bm-services.com>
 *  @copyright 2012-2017 Verifone e-commerce
 *  @license   http://opensource.org/licenses/OSL-3.0
@@ -24,18 +24,22 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-function upgrade_module_2_1_0($object)
+function upgrade_module_3_0_19($object)
 {
-    if (version_compare(_PS_VERSION_, '1.5', '>=')) {
-        $sql = array();
-        $sql[] = 'ALTER TABLE `'._DB_PREFIX_.'paybox_order` ADD `initial_amount` int(10) unsigned NOT NULL';
+    $sql = array();
+    // Set 3DS to mandatory, when available
+    $sql[] = 'UPDATE `'._DB_PREFIX_.'paybox_card` SET `3ds`="2" WHERE `3ds`="1"';
+    // Add new 3ds_version column if not already exists
+    $installer = new PayboxInstaller();
+    if (!$installer->_sqlColumnExists(_DB_PREFIX_.'paybox_order', '3ds_version')) {
+        $sql[] = 'ALTER TABLE `'._DB_PREFIX_.'paybox_order` ADD COLUMN `3ds_version` varchar(255) NULL AFTER `secure`';
+    }
 
-        foreach ($sql as $query) {
-            if (!Db::getInstance()->Execute($query)) {
-                return false;
-            }
+    foreach ($sql as $query) {
+        if (!Db::getInstance()->execute($query)) {
+            return false;
         }
     }
 
-    return $object->registerHook('actionObjectOrderUpdateAfter');
+    return true;
 }

@@ -45,6 +45,7 @@ $classes = array(
     'PayboxInstaller',
     'PayboxKwixo',
     'PayboxDb',
+    'PayboxIso3166Country',
 );
 
 foreach ($classes as $class) {

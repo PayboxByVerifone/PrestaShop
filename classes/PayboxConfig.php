@@ -13,7 +13,7 @@
 * support@paybox.com so we can mail you a copy immediately.
 *
 *  @category  Module / payments_gateways
-*  @version   3.0.14
+*  @version   3.0.8
 *  @author    BM Services <contact@bm-services.com>
 *  @copyright 2012-2017 Verifone e-commerce
 *  @license   http://opensource.org/licenses/OSL-3.0
@@ -30,51 +30,52 @@ if (!defined('_PS_VERSION_')) {
 class PayboxConfig
 {
     private $_defaults = array(
-        'PAYBOX_3DS'                            => 1,
-        'PAYBOX_3DS_MIN_AMOUNT'                 => '',
-        'PAYBOX_MIN_AMOUNT'                 	=> '',
-        'PAYBOX_MAX_AMOUNT'                 	=> '',
-        'PAYBOX_DEBUG_MODE'                     => 'FALSE',
-        'PAYBOX_HASH'                           => 'SHA512',
-        'PAYBOX_IDENTIFIANT'                    => '3262411',
-        'PAYBOX_KEYTEST'                        => '0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF',
-        'PAYBOX_PASS'                           => '1999888I',
-        'PAYBOX_PRODUCTION'                     => 0,
-        'PAYBOX_RANG'                           => '77',
-        'PAYBOX_SITE'                           => '1999888',
-        'PAYBOX_WEB_CASH_DIFF_DAY'              => 0,
-        'PAYBOX_WEB_CASH_TYPE'                  => 'immediate',
-        'PAYBOX_AUTORIZE_WALLET_CARD'           => 'CB,VISA,EUROCARD_MASTERCARD',
-        'PAYBOX_WEB_CASH_ENABLE'                => 1,
-        'PAYBOX_WEB_CASH_VALIDATION'            => '',
-        'PAYBOX_WEB_CASH_STATE'                 => 2,
-        'PAYBOX_WEB_CASH_DIRECT'                => 1,
-        'PAYBOX_RECURRING_ENABLE'               => '',
-        'PAYBOX_RECURRING_NUMBER'               => '0',
-        'PAYBOX_RECURRING_PERIODICITY'          => '',
-        'PAYBOX_RECURRING_ADVANCE'              => '',
-        'PAYBOX_RECURRING_MIN_AMOUNT'           => '',
-        'PAYBOX_RECURRING_MODE'                 => 'NX',
-        'PAYBOX_LAST_STATE_NX'                  => 2,
-        'PAYBOX_MIDDLE_STATE_NX'                => '',
-        'PAYBOX_SUBSCRIBE_NUMBER'               => '0',
-        'PAYBOX_SUBSCRIBE_PERIODICITY'          => '',
-        'PAYBOX_SUBSCRIBE_DAY'                  => '1',
-        'PAYBOX_SUBSCRIBE_DELAY'                => '0',
-        'PAYBOX_DIRECT_ACTION'                  => 'N',
-        'PAYBOX_DIRECT_VALIDATION'              => '',
-        'PAYBOX_WALLET_ACTION'                  => 'N',
-        'PAYBOX_WALLET_PERSONNAL_DATA'          => 0,
-        'PAYBOX_DEFAULTCATEGORYID'              => '',
-        'PAYBOX_WEB_CASH_ACTION'                => 'N',
-        'PAYBOX_BO_ACTIONS'                     => 0,
-        'PAYBOX_PAYMENT_DISPLAY'                => 0,
-        'PAYBOX_DOC_URL'                        => 'http://www1.paybox.com/espace-integrateur-documentation/modules-by-paybox/',
-        //'PAYBOX_CANCEL_URL'                     => 'http://'.htmlspecialchars($_SERVER['HTTP_HOST'], ENT_COMPAT, 'UTF-8').__PS_BASE_URI__.'modules/'.$this->name.'/validation.php',
-        //'PAYBOX_NOTIFICATION_URL'               => 'http://'.htmlspecialchars($_SERVER['HTTP_HOST'], ENT_COMPAT, 'UTF-8').__PS_BASE_URI__.'modules/'.$this->name.'/validation.php',
-        //'PAYBOX_RETURN_URL'                     => 'http://'.htmlspecialchars($_SERVER['HTTP_HOST'], ENT_COMPAT, 'UTF-8').__PS_BASE_URI__.'modules/'.$this->name.'/validation.php',
-        //'PAYBOX_NOTIFICATION_NX_URL'            => 'http://'.htmlspecialchars($_SERVER['HTTP_HOST'], ENT_COMPAT, 'UTF-8').__PS_BASE_URI__.'modules/'.$this->name.'/validation_nx.php',
-        //'PAYBOX_RETURN_NX_URL'                  => 'http://'.htmlspecialchars($_SERVER['HTTP_HOST'], ENT_COMPAT, 'UTF-8').__PS_BASE_URI__.'modules/'.$this->name.'/validation_nx.php',
+        'PAYBOX_MIN_AMOUNT'            => '',
+        'PAYBOX_MAX_AMOUNT'            => '',
+        'PAYBOX_DEBUG_MODE'            => 'FALSE',
+        'PAYBOX_HASH'                  => 'SHA512',
+        'PAYBOX_IDENTIFIANT'           => '3262411',
+        'PAYBOX_KEYTEST'               => '0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF',
+        'PAYBOX_PASS'                  => '1999888I',
+        'PAYBOX_PRODUCTION'            => 0,
+        'PAYBOX_RANG'                  => '77',
+        'PAYBOX_SITE'                  => '1999888',
+        'PAYBOX_WEB_CASH_DIFF_DAY'     => 0,
+        'PAYBOX_WEB_CASH_TYPE'         => 'immediate',
+        'PAYBOX_AUTORIZE_WALLET_CARD'  => 'CB,VISA,EUROCARD_MASTERCARD',
+        'PAYBOX_WEB_CASH_ENABLE'       => 1,
+        'PAYBOX_WEB_CASH_VALIDATION'   => '',
+        'PAYBOX_WEB_CASH_STATE'        => 2,
+        'PAYBOX_WEB_CASH_DIRECT'       => 1,
+        'PAYBOX_RECURRING_ENABLE'      => '',
+        'PAYBOX_RECURRING_NUMBER'      => '0',
+        'PAYBOX_RECURRING_PERIODICITY' => '',
+        'PAYBOX_RECURRING_ADVANCE'     => '',
+        'PAYBOX_RECURRING_MIN_AMOUNT'  => '',
+        'PAYBOX_RECURRING_MODE'        => 'NX',
+        'PAYBOX_LAST_STATE_NX'         => 2,
+        'PAYBOX_MIDDLE_STATE_NX'       => '',
+        'PAYBOX_PAYPAL_HOLD'           => '',
+        'PAYBOX_SUBSCRIBE_NUMBER'      => '0',
+        'PAYBOX_SUBSCRIBE_PERIODICITY' => '',
+        'PAYBOX_SUBSCRIBE_DAY'         => '1',
+        'PAYBOX_SUBSCRIBE_DELAY'       => '0',
+        'PAYBOX_DIRECT_ACTION'         => 'N',
+        'PAYBOX_DIRECT_VALIDATION'     => '',
+        'PAYBOX_WALLET_ACTION'         => 'N',
+        'PAYBOX_WALLET_PERSONNAL_DATA' => 0,
+        'PAYBOX_DEFAULTCATEGORYID'     => '',
+        'PAYBOX_WEB_CASH_ACTION'       => 'N',
+        'PAYBOX_BO_ACTIONS'            => 0,
+        'PAYBOX_PAYMENT_DISPLAY'       => 0,
+        'PAYBOX_DOC_URL'               => 'http://www1.paybox.com/espace-integrateur-documentation/modules-by-paybox/',
+        /*
+        'PAYBOX_CANCEL_URL'            => 'http://'.htmlspecialchars($_SERVER['HTTP_HOST'], ENT_COMPAT, 'UTF-8').__PS_BASE_URI__.'modules/'.$this->name.'/validation.php',
+        'PAYBOX_NOTIFICATION_URL'      => 'http://'.htmlspecialchars($_SERVER['HTTP_HOST'], ENT_COMPAT, 'UTF-8').__PS_BASE_URI__.'modules/'.$this->name.'/validation.php',
+        'PAYBOX_RETURN_URL'            => 'http://'.htmlspecialchars($_SERVER['HTTP_HOST'], ENT_COMPAT, 'UTF-8').__PS_BASE_URI__.'modules/'.$this->name.'/validation.php',
+        'PAYBOX_NOTIFICATION_NX_URL'   => 'http://'.htmlspecialchars($_SERVER['HTTP_HOST'], ENT_COMPAT, 'UTF-8').__PS_BASE_URI__.'modules/'.$this->name.'/validation_nx.php',
+        'PAYBOX_RETURN_NX_URL'         => 'http://'.htmlspecialchars($_SERVER['HTTP_HOST'], ENT_COMPAT, 'UTF-8').__PS_BASE_URI__.'modules/'.$this->name.'/validation_nx.php',
+        */
     );
 
     private $_urls = array(
@@ -164,23 +165,13 @@ class PayboxConfig
             $value = false;
         }
 
-        if (($value === false) || ($name=='PAYBOX_HASH' && $value === '') && isset($this->_defaults[$name])) {
+        if ((($value === false) || ($name=='PAYBOX_HASH' && $value === '')) && isset($this->_defaults[$name])) {
             $value = $this->_defaults[$name];
         }
 
         return $value;
     }
 
-    public function get3DSEnabled()
-    {
-        return $this->_get('PAYBOX_3DS');
-    }
-
-    public function get3DSAmount()
-    {
-        return $this->_get('PAYBOX_3DS_MIN_AMOUNT');
-    }
-    
     public function getMinAmount()
     {
         return $this->_get('PAYBOX_MIN_AMOUNT');
@@ -246,6 +237,11 @@ class PayboxConfig
         return $this->_get('PAYBOX_KWIXO');
     }
 
+    public function getPaypalHoldState()
+    {
+        return $this->_get('PAYBOX_PAYPAL_HOLD');
+    }
+
     public function getPassword()
     {
         $value = $this->_get('PAYBOX_PASS');
@@ -282,7 +278,7 @@ class PayboxConfig
 
     protected function _getUrls($type)
     {
-           $environment = $this->isProduction() ? 'production' : 'test';
+        $environment = $this->isProduction() ? 'production' : 'test';
         if (isset($this->_urls[$type][$environment])) {
             return $this->_urls[$type][$environment];
         }

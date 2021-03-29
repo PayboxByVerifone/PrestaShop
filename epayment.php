@@ -13,7 +13,7 @@
 * support@paybox.com so we can mail you a copy immediately.
 *
 *  @category  Module / payments_gateways
-*  @version   3.0.17
+*  @version   3.0.20
 *  @author    BM Services <contact@bm-services.com>
 *  @copyright 2012-2017 Verifone e-commerce
 *  @license   http://opensource.org/licenses/OSL-3.0
@@ -46,7 +46,7 @@ class Epayment extends PaymentModule
 
         $this->name = 'epayment';
         $this->tab = 'payments_gateways';
-        $this->version = '3.0.17';
+        $this->version = '3.0.20';
         $this->author = 'Verifone e-commerce';
         $this->bootstrap = true;
 
@@ -56,6 +56,10 @@ class Epayment extends PaymentModule
 
         $this->displayName = 'Verifone e-commerce';
         $this->description = $this->l('In one integration, offer many payment methods, get a customized secure payment page, multi-lingual and multi-currency and offer debit on delivery or in 3 installments without charges for your customers.');
+
+        if ($this->displayName == 'Sofinco') {
+            $this->description = $this->l('Allow your customers to pay in 2, 3 or 4 times through an easy, fast and effective subscription, increasing your cart average and conversion rate. This is for private individuals with a french credit card.');
+        }
         $this->controllers = array('redirect','validation');
     }
 
@@ -123,7 +127,7 @@ class Epayment extends PaymentModule
     {
         return $this->_path;
     }
-    
+
     public function getRedirPath()
     {
         $base = Tools::getHttpHost(true, false).__PS_BASE_URI__;
@@ -152,7 +156,7 @@ class Epayment extends PaymentModule
     public function hookCancelProduct($params)
     {
         return true;
-/*
+        /*
         $helper = $this->getHelper();
 
         // Direct method must be enabled
@@ -231,11 +235,14 @@ class Epayment extends PaymentModule
                     return false;
             }
         }
-*/
+        */
     }
 
     /**
      * On payment selection page generation
+     * @version 3.0.14
+     * @param $params
+     * @return $html
      */
     public function hookPayment($params)
     {
@@ -267,7 +274,7 @@ class Epayment extends PaymentModule
                 'card' => $method['type_card'],
                 'label' => $method['label'],
                 //'url' => $this->getPath().'?'.$params,
-				'url' => $this->getRedirPath().'&'.$params,										   
+                'url' => $this->getRedirPath().'&'.$params,
                 'image' => $this->getMethodImageUrl($method['type_card']),
             );
             $cards[] = $card;
@@ -319,13 +326,18 @@ class Epayment extends PaymentModule
         return $html;
     }
 
+    /**
+     * @version 3.0.14
+     * @param unknown $params
+     * @return $paymentOptions
+     */
     public function hookDisplayPaymentEU($params)
     {
         if (!$this->active) {
             return;
         }
 
-		global $cart;
+        global $cart;
         $paymentOptions = array();
 
         // Load methods
@@ -399,7 +411,7 @@ class Epayment extends PaymentModule
      * 3.0.11 Add logo
      *
      * @since    3.0.5
-     * @version  3.0.11
+     * @version  3.0.14
      * @param    array $params
      * @return   PrestaShop\PrestaShop\Core\Payment\PaymentOption[]
      */
@@ -409,24 +421,26 @@ class Epayment extends PaymentModule
         if (!$this->active) {
             return;
         }
-		global $cart;
+
+        global $cart;
         $paymentOptions = array();
 
-		$error = Tools::getValue('payboxReason');
-		if($error){
-			$messageHtml = "<p class='alert alert-danger'><b>";
-			switch($error){
-				case "cancel":
-					$messageHtml .=  $this->l('The payment was cancelled.');
-					break;
-				case "error":
-					$messageHtml .=  $this->l('Your payment was refused, please choose another payment method.');
-					break;
-				default:break;
-			}
-			$messageHtml .=  "</b></p>";
-			echo $messageHtml;
-		}
+        $error = Tools::getValue('payboxReason');
+        if ($error) {
+            $messageHtml = "<p class='alert alert-danger'><b>";
+            switch ($error) {
+                case "cancel":
+                    $messageHtml .=  $this->l('The payment was cancelled.');
+                    break;
+                case "error":
+                    $messageHtml .=  $this->l('Your payment was refused, please choose another payment method.');
+                    break;
+                default:
+                    break;
+            }
+            $messageHtml .=  "</b></p>";
+            echo $messageHtml;
+        }
 
         // Load methods
         $methods = $this->getHelper()->getActivePaymentMethods($cart);
@@ -546,7 +560,8 @@ class Epayment extends PaymentModule
         if (empty($details)) {
             return;
         }
-		$version = version_compare(_PS_VERSION_, '1.6.1.24', '>') ? "17":"";
+
+        $version = version_compare(_PS_VERSION_, '1.6.1.24', '>') ? "17":"";
 
         $lang = $this->context->language;
         if (!empty($lang) && !empty($lang->iso_code)) {
@@ -558,6 +573,7 @@ class Epayment extends PaymentModule
 
         return $this->fetchTemplate('payment_return'. $version. '.tpl');
     }
+
     /**
      * On order state change, do capture if needed
      */
@@ -855,6 +871,8 @@ class Epayment extends PaymentModule
 
         if ($params['paymentType'] == 'KWIXO') {
             $state = $this->_config->getKwixoSuccessState();
+        } elseif ($params['paymentType'] == 'PAYPAl' && $params['error'] == '99999') {
+            $state = $this->_config->getPaypalHoldState();
         } else {
             $state = $this->_config->getSuccessState();
         }
@@ -982,7 +1000,7 @@ class Epayment extends PaymentModule
             // $this->getHelper()->addOrderNote($order, $message);
             $this->logDebug(sprintf('Cart %d: Order %d / %s', $cart->id, $order->id, $message));
         } else {
-        // Other payments
+            // Other payments
             $lastPayment = false;
             $order = new Order($orderId);
             $this->_processing = true;
@@ -1132,8 +1150,8 @@ class Epayment extends PaymentModule
             );
 
             Mail::Send(intval($order->id_lang), 'payment_recurring', $title, $varsTpl, $customer->email, $customerName, null, null, null, null, dirname(__FILE__) . '/mails/');
-        } // Other payments
-        else {
+        } else {
+            // Other payments
             $order = new Order($orderId);
             $details = $this->getHelper()->getOrderRecurringDetails($orderId);
 

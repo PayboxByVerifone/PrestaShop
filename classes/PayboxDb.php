@@ -30,7 +30,7 @@ if (!defined('_PS_VERSION_')) {
 class PayboxDb
 {
     public $db;
-    
+
     public function __construct()
     {
         $this->db = Db::getInstance();

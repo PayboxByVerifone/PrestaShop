@@ -22,4 +22,4 @@
 <p>Your order on <strong class="bold">{$shop_name}</strong> is complete.</p>
 <p>You have chosen the <img src="{$base_dir_ssl}modules/epayment/img/epayment-xs.png" /> method.</p>
 <p>Your order will be sent very soon.</p>
-<p>For any question or for further information, please contact our <a href="{$link->getPageLink('contact')}">customer support</a>.</p>
+<p>For any question or for further information, please contact our <a href="{$base_dir_ssl}contact-form.php">customer support</a>.</p>

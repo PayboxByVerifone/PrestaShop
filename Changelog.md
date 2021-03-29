@@ -1,23 +1,36 @@
 # Change Log
 
+## [3.0.20] 2021-03-16
+### Ajouts & Corrections
+- Force 3DSv2 for all cards
+- Fix MasterCard card mapping
+
+## [3.0.19] 2020-10-28
+### Ajouts & Corrections
+- Add 3DSv2 support
+
+## [3.0.18] 2020-09-17
+### Ajouts & Corrections
+- Corrections mineures: améliorations paypal (gestion mise en attente)
+
 ## [3.0.17] 2020-02-24
 ### Ajouts & Corrections
-- correcion compatibilité ps 1.7 (erreur 500): référence etransactions erronée
-Thx@Sophie 
+- Correction compatibilité ps 1.7 (erreur 500): référence etransactions erronée
+Thx@Sophie
 
 ## [3.0.16] 2019-12-18
 ### Ajouts & Corrections
-- correcion compatibilité ps 1.6 (erreur 500)
+- Correction compatibilité ps 1.6 (erreur 500)
 
 ## [3.0.15] 2019-11-29
 ### Ajouts & Corrections
-- correcion compatibilité et divers bugfix
+- Correction compatibilité et divers bugfix
 
 ## [3.0.14] 2019-10-31
 ### Ajouts & Corrections
 - Ajout de la limite haute pour le 3DS
 - Correction du paiement partiel systématique
-- Correction du temps de validation des commandes au retour sur la boutique  
+- Correction du temps de validation des commandes au retour sur la boutique
 - Correction de problèmes mineurs de variables smarty au retour sur la boutique
 
 ## [3.0.13] 2019-10-03

@@ -13,7 +13,7 @@
 * support@paybox.com so we can mail you a copy immediately.
 *
 *  @category  Module / payments_gateways
-*  @version   3.0.11
+*  @version   3.0.8
 *  @author    BM Services <contact@bm-services.com>
 *  @copyright 2012-2017 Verifone e-commerce
 *  @license   http://opensource.org/licenses/OSL-3.0
@@ -101,6 +101,14 @@ class PayboxAdminOrder extends PayboxAbstractAdmin
                 $this->l('Warranty 3D-Secure:'),
                 $text
             ));
+
+            // 3DS Version
+            $text = empty($details['3ds_version']) ? '1.0.0' : $details['3ds_version'];
+            $w->html(sprintf(
+                $tpl,
+                $this->l('3DS Version:'),
+                $text
+            ));
         }
 
         // Processing date
@@ -170,7 +178,7 @@ class PayboxAdminOrder extends PayboxAbstractAdmin
         $w->button($this->l('Capture this amount'), 'submit');
         $w->html('</form>');
         $w->html('</p>');
-/*
+        /*
         // Cancel item(s)
         if (Configuration::get('PS_ORDER_RETURN')) {
             $w->html(sprintf(
@@ -186,7 +194,7 @@ class PayboxAdminOrder extends PayboxAbstractAdmin
             $w->html('</form>');
             $w->html('</p>');
         }
-*/
+        */
         $this->_writeEndDetails($w, $details);
 
         if (version_compare(_PS_VERSION_, '1.6', '<')) {
@@ -297,13 +305,6 @@ EOF;
         $this->_writeEndDetails($w, $details);
     }
 
-    /**
-     * Prints Verifone e-commerce payment information
-     *
-     * @version  3.0.11
-     * @param    PayboxHtmlWriter $w       [description]
-     * @param    array                  $details [description]
-     */
     private function _writeRefundableDetails(PayboxHtmlWriter $w, array $details)
     {
         $this->_writeCommonDetails($w, $details);
@@ -366,8 +367,7 @@ EOF;
             $w->html('</p>');
         }
 
-
-                $js = <<<EOF
+        $js = <<<EOF
 (function($) {
     $(document).ready(function() {
         $('#paybox_refund_first, #paybox_refund_cancel').submit(function() {
@@ -395,39 +395,39 @@ EOF;
             $possibleRefund = (float)($details['amount']) / $amountScale;
             // if ($possibleRefund - $partialRefund > 0) {
             if ($possibleRefund > 0) {
-                    $text = $this->l('The transaction can be refund many times');
-                    $w->html(sprintf('<p>%s</p>', $text));
+                $text = $this->l('The transaction can be refund many times');
+                $w->html(sprintf('<p>%s</p>', $text));
 
-                    // [2.2.0] Use of Tools::displayPrice + only $possibleRefund
-                    // $tpl = '<p>%s %s %s</p>';
-                    $tpl = '<p>%s %s</p>';
-                    $w->html(sprintf(
-                        $tpl,
-                        $this->l('It is possible to repay'),
-                        Tools::displayPrice($possibleRefund, $currency)
-                        // (string)($possibleRefund - $partialRefund),
-                        // (string)($possibleRefund),
-                        // $currency->sign
-                    ));
+                // [2.2.0] Use of Tools::displayPrice + only $possibleRefund
+                // $tpl = '<p>%s %s %s</p>';
+                $tpl = '<p>%s %s</p>';
+                $w->html(sprintf(
+                    $tpl,
+                    $this->l('It is possible to repay'),
+                    Tools::displayPrice($possibleRefund, $currency)
+                    // (string)($possibleRefund - $partialRefund),
+                    // (string)($possibleRefund),
+                    // $currency->sign
+                ));
                 // }
 
 
                 // Refund all amount
-                    $w->html('<p class="left">');
-                    $w->html(sprintf(
-                        '<form id="paybox_refund_all" method="post" action="%s">',
-                        $w->escape($_SERVER['REQUEST_URI'])
-                    ));
-                    $w->html(sprintf(
-                        '<input type="hidden" name="id_order" value="%d" />',
-                        $details['id_order']
-                    ));
-                    $w->html('<input type="hidden" name="order_action" value="refund_all" />');
-                    $w->button($this->l('Refund total transaction'), 'submit');
-                    $w->html('</form>');
-                    $w->html('</p>');
+                $w->html('<p class="left">');
+                $w->html(sprintf(
+                    '<form id="paybox_refund_all" method="post" action="%s">',
+                    $w->escape($_SERVER['REQUEST_URI'])
+                ));
+                $w->html(sprintf(
+                    '<input type="hidden" name="id_order" value="%d" />',
+                    $details['id_order']
+                ));
+                $w->html('<input type="hidden" name="order_action" value="refund_all" />');
+                $w->button($this->l('Refund total transaction'), 'submit');
+                $w->html('</form>');
+                $w->html('</p>');
 
-/*
+                /*
                 // Refund item(s)
                 if (Configuration::get('PS_ORDER_RETURN')) {
                     $w->html('<p class="left">');
@@ -439,31 +439,31 @@ EOF;
                     $w->html('</form>');
                     $w->html('</p>');
                 }
-*/
+                */
                 // Refund amount
-                    $w->html('<p class="left">');
-                    $w->html('<form id="paybox_refund_amount">');
-                    $w->button($this->l('Refund of an amount'), 'submit');
-                    $w->html('</form>');
-                    $w->html('</p>');
+                $w->html('<p class="left">');
+                $w->html('<form id="paybox_refund_amount">');
+                $w->button($this->l('Refund of an amount'), 'submit');
+                $w->html('</form>');
+                $w->html('</p>');
 
                 // Refund amount form
-                    $w->html('<p class="left">');
-                    $w->html(sprintf(
-                        '<form id="paybox_refund_amount_input" method="post" action="%s" style="display:none;">',
-                        $w->escape($_SERVER['REQUEST_URI'])
-                    ));
-                    $w->html(sprintf(
-                        '<input type="hidden" name="id_order" value="%d" />',
-                        $details['id_order']
-                    ));
-                    $w->html('<input type="hidden" name="order_action" value="refund_amount" />');
-                    $w->html('<input type="text" name="amountRefund" value="" /> ');
-                    $w->button($this->l('Refund this amount'), 'submit');
-                    $w->html('</form>');
-                    $w->html('</p>');
+                $w->html('<p class="left">');
+                $w->html(sprintf(
+                    '<form id="paybox_refund_amount_input" method="post" action="%s" style="display:none;">',
+                    $w->escape($_SERVER['REQUEST_URI'])
+                ));
+                $w->html(sprintf(
+                    '<input type="hidden" name="id_order" value="%d" />',
+                    $details['id_order']
+                ));
+                $w->html('<input type="hidden" name="order_action" value="refund_amount" />');
+                $w->html('<input type="text" name="amountRefund" value="" /> ');
+                $w->button($this->l('Refund this amount'), 'submit');
+                $w->html('</form>');
+                $w->html('</p>');
 
-                    $js = <<<EOF
+                $js = <<<EOF
 (function($) {
     $(document).ready(function() {
         $('#paybox_refund_all, #paybox_refund_amount_input').submit(function() {
@@ -474,15 +474,15 @@ EOF;
             return false;
         });
 EOF;
-                    if (Configuration::get('PS_ORDER_RETURN')) {
-                        $js .= <<<EOF
+                if (Configuration::get('PS_ORDER_RETURN')) {
+                    $js .= <<<EOF
         $('#paybox_refund_item').submit(function() {
             $('#desc-order-standard_refund').click();
             return false;
         });
 EOF;
-                    }
-                    $js .= <<<EOF
+                }
+                $js .= <<<EOF
         $('#paybox_refund_amount').submit(function() {
             $('#paybox_refund_amount_input').show('normal');
             return false;
@@ -490,7 +490,7 @@ EOF;
     });
 })(jQuery);
 EOF;
-                    $w->js(sprintf($js, json_encode($this->l('Are you sure?'))));
+                $w->js(sprintf($js, json_encode($this->l('Are you sure?'))));
             }
         }
     }
@@ -561,7 +561,7 @@ EOF;
                     $w->html('</form>');
                     $w->html('</p>');
 
-/*
+                    /*
                     // Refund item(s)
                     if (Configuration::get('PS_ORDER_RETURN')) {
                         $w->html('<p class="left">');
@@ -573,7 +573,8 @@ EOF;
                         $w->html('</form>');
                         $w->html('</p>');
                     }
-*/
+                    */
+
                     // Refund amount
                     $w->html('<p class="left">');
                     $w->html('<form id="paybox_refund_amount">');
@@ -609,7 +610,7 @@ EOF;
             return false;
         });
 EOF;
-/*
+                    /*
                     if (Configuration::get('PS_ORDER_RETURN')) {
                         $js .= <<<EOF
         $('#paybox_refund_item').submit(function() {
@@ -618,7 +619,7 @@ EOF;
         });
 EOF;
                     }
-*/
+                    */
                     $js .= <<<EOF
         $('#paybox_refund_amount').submit(function() {
             $('#paybox_refund_amount_input').show('normal');
@@ -632,7 +633,6 @@ EOF;
             }
         }
     }
-
 
     /**
      * [getContent description]
@@ -663,14 +663,14 @@ EOF;
         // For Kwixo payment
         if (in_array($details['carte'], array('STANDARD', '1XRNP', 'CREDIT'))) {
             $this->_writeKwixoDetails($w, $details);
-        } // Can be refunded?
-        elseif ($this->getHelper()->canRefund($orderId) && ('PREPAYEE' != $details['method'] || 'mixed' == $details['payment_by'])) {
+        } elseif ($this->getHelper()->canRefund($orderId) && 'PREPAYEE' != $details['method']) {
+            // Can be refunded?
             $this->_writeRefundableDetails($w, $details);
-        } // Waiting for capture?
-        elseif ($this->getHelper()->canCapture($orderId) && 'mixed' != $details['payment_by']) {
+        } elseif ($this->getHelper()->canCapture($orderId)) {
+            // Waiting for capture?
             $this->_writeCapturableDetails($w, $details);
-        } // All other cases
-        else {
+        } else {
+            // All other cases
             $this->_writeDetails($w, $details);
         }
     }

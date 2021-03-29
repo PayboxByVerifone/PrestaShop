@@ -23,7 +23,7 @@
 if (!defined('_PS_VERSION_')) {
     exit;
 }
- 
+
 function upgrade_module_2_2_0($object)
 {
     if (version_compare(_PS_VERSION_, '1.6', '>=')) {

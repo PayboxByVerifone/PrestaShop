@@ -13,7 +13,7 @@
 * support@paybox.com so we can mail you a copy immediately.
 *
 *  @category  Module / payments_gateways
-*  @version   3.0.14
+*  @version   3.0.8
 *  @author    BM Services <contact@bm-services.com>
 *  @copyright 2012-2017 Verifone e-commerce
 *  @license   http://opensource.org/licenses/OSL-3.0
@@ -30,7 +30,6 @@ if (!defined('_PS_VERSION_')) {
  */
 class PayboxController extends PayboxAbstract
 {
-
     public function __construct()
     {
         parent::__construct(new Epayment());
@@ -309,8 +308,7 @@ class PayboxController extends PayboxAbstract
         // Build form
         $url = $this->getHelper()->checkUrls($urls);
         $debug = $this->getConfig()->isDebug();
-        $inputType = $debug ? 'text' : 'hidden';
-        ?>
+        $inputType = $debug ? 'text' : 'hidden'; ?>
         <!doctype html>
         <html>
             <body>
@@ -322,8 +320,7 @@ class PayboxController extends PayboxAbstract
                             echo $this->l('This is a debug view. Click continue to be redirected to PaymentPlatform payment page.');
                         } else {
                             echo $this->l('You will be redirected to the PaymentPlatform payment page. If not, please use the button bellow.');
-                        }
-                        ?>
+                        } ?>
                     </center></p>
                 <p><center><button style="margin-top: 35px; background-color: #ffffff; border: none; color: #0089CF; padding: 10px 38px; font-size: 16px; font-weight: 600; cursor: pointer;"><?php echo $this->l('Continue...'); ?></button></center></p>
             <?php
@@ -337,15 +334,13 @@ class PayboxController extends PayboxAbstract
                 if ($debug) {
                     echo '</p>';
                 }
-            }
-            ?>
+            } ?>
             </form>
         </div>
         <?php
         if (!$debug) {
             echo '<script>document.forms["PayboxSystem"].submit();</script>';
-        }
-        ?>
+        } ?>
         </body>
         </html>
         <?php
@@ -397,8 +392,7 @@ class PayboxController extends PayboxAbstract
                 $orderId = Order::getOrderByCartId($cart->id);
                 if (($orderId === false) || ($this->getHelper()->getOrderDetails($orderId) === false)) {
                     if ($loop < 20) {
-                        $url = '?' . $_SERVER['QUERY_STRING'] . '&loop=' . ($loop + 1);
-                        ?>
+                        $url = '?' . $_SERVER['QUERY_STRING'] . '&loop=' . ($loop + 1); ?>
                         <!doctype html>
                         <html>
                             <head>
@@ -425,7 +419,7 @@ class PayboxController extends PayboxAbstract
                 // TODO no way to associate this message to an order...
                 //RetroCompat 1.4
                 if (version_compare(_PS_VERSION_, '1.5', '<')) {
-                     $url = __PS_BASE_URI__.'order-confirmation.php?id_cart='.$cart->id.'&id_module='.$this->getModule()->id.'&key='.$cart->secure_key;
+                    $url = __PS_BASE_URI__.'order-confirmation.php?id_cart='.$cart->id.'&id_module='.$this->getModule()->id.'&key='.$cart->secure_key;
                 } else {
                     $url = $this->getModule()->getContext()->link->getPageLink('order-confirmation', null, null, array(
                         'id_cart' => $cart->id,

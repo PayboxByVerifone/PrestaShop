@@ -13,7 +13,7 @@
 * support@paybox.com so we can mail you a copy immediately.
 *
 *  @category  Module / payments_gateways
-*  @version   3.0.14
+*  @version   3.0.15
 *  @author    BM Services <contact@bm-services.com>
 *  @copyright 2012-2017 Verifone e-commerce
 *  @license   http://opensource.org/licenses/OSL-3.0
@@ -246,6 +246,7 @@ class PayboxHelper extends PayboxAbstract
         'W' => 'date',
         'Y' => 'country',
         'Z' => 'paymentIndex',
+        'v' => '3dsVersion',
     );
 
     private $_transactionId = null;
@@ -451,6 +452,7 @@ class PayboxHelper extends PayboxAbstract
                 'pays' => isset($params['country']) ? $params['country'] : '',
                 'ip' => $params['ip'],
                 'secure' => isset($params['3dsWarranty']) ? $params['3dsWarranty'] : 'N',
+                '3ds_version' => isset($params['3dsVersion']) ? str_replace('3DSv', '', trim($params['3dsVersion'])) : '1.0.0',
                 'date' => $params['date']
             );
 
@@ -516,7 +518,6 @@ class PayboxHelper extends PayboxAbstract
                     $this->logFatal(sprintf('Cart %d: Problem updating PrestaShop payment information', $cart->id));
                     return false;
                 }
-
             } else {
                 $this->logFatal(sprintf('Cart %d: No payment found to be updated', $order->id_cart));
                 return false;
@@ -675,32 +676,13 @@ class PayboxHelper extends PayboxAbstract
             }
         }
 
-        // 3-D Secure
-        $enable3ds = false;
-        $tds = isset($card['3ds']) ? $card['3ds'] : null;
-        switch ($tds) {
-            case 1:
-                if ($this->getConfig()->get3DSEnabled()) {
-                    $tdsAmount = $this->getConfig()->get3DSAmount();
-                    $enable3ds = empty($tdsAmount) || $orderAmount >= $tdsAmount;
-                }
-                break;
-
-            case 2:
-                $enable3ds = true;
-                break;
-
-            case 0:
-            default:
-        }
-        // Enable is the default behaviour
-        if (!$enable3ds) {
-            $values['PBX_3DS'] = 'N';
-        }
-
         // Payment platform => PrestaShop
-        $values['PBX_RETOUR'] = 'M:M;R:R;T:T;A:A;B:B;C:C;D:D;E:E;F:F;G:G;I:I;J:J;N:N;O:O;P:P;Q:Q;S:S;W:W;Y:Y;Z:Z;K:K';
+        $values['PBX_RETOUR'] = 'M:M;R:R;T:T;A:A;B:B;C:C;D:D;E:E;F:F;G:G;I:I;J:J;N:N;O:O;P:P;Q:Q;S:S;W:W;Y:Y;Z:Z;v:v;K:K';
         $values['PBX_RUF1'] = 'POST';
+
+        // 3DSv2 parameters
+        $values['PBX_SHOPPINGCART'] = $this->getXmlShoppingCartInformation($cart);
+        $values['PBX_BILLING'] = $this->getXmlBillingInformation($cart);
 
         // Choose correct language
         $values['PBX_LANGUE'] = $this->getLanguage($cart);
@@ -899,7 +881,7 @@ class PayboxHelper extends PayboxAbstract
         }
 
         if (array_key_exists($this->_resultMapping["C"], $result)) {
-            if ($result[$this->_resultMapping["C"]] == "MasterCard") {
+            if ($result[$this->_resultMapping["C"]] == "Mastercard") {
                 $result[$this->_resultMapping["C"]] = "EUROCARD_MASTERCARD";
             }
         }
@@ -974,28 +956,30 @@ class PayboxHelper extends PayboxAbstract
     {
         $allMethods = $this->getAllPaymentMethods();
         $methods = array();
-		$amountScale = $this->_currencyDecimals[$this->getCurrency($cart)];
-		$amountScale = pow(10, $amountScale);
-		$max = round(floatval($this->getConfig()->getMaxAmount()));
-		$max = intval(sprintf('%03d', $max*$amountScale));
-		$min = round(floatval($this->getConfig()->getMinAmount()));
-		$min = intval(sprintf('%03d', $min*$amountScale));
-		$cartAmount = round(floatval($cart->getOrderTotal()));
-		$cartAmount = intval(sprintf('%03d', $cartAmount * $amountScale));
-		$limited = false;
-		if($min>0 || $max>0)$limited = true;
+        $amountScale = $this->_currencyDecimals[$this->getCurrency($cart)];
+        $amountScale = pow(10, $amountScale);
+        $max = round(floatval($this->getConfig()->getMaxAmount()));
+        $max = intval(sprintf('%03d', $max*$amountScale));
+        $min = round(floatval($this->getConfig()->getMinAmount()));
+        $min = intval(sprintf('%03d', $min*$amountScale));
+        $cartAmount = round(floatval($cart->getOrderTotal()));
+        $cartAmount = intval(sprintf('%03d', $cartAmount * $amountScale));
+        $limited = false;
+        if ($min>0 || $max>0) {
+            $limited = true;
+        }
         foreach ($allMethods as $method) {
             $id = $method['id_card'];
             $active = Configuration::get('PAYBOX_CARD_ENABLED_'.$id);
-			if($limited && (($cartAmount >= $max) || ($cartAmount <= $min))){
-				$active = false;
-			}else{
-				$active = true;
-			}
+            if ($limited && (($cartAmount >= $max) || ($cartAmount <= $min))) {
+                $active = false;
+            } else {
+                $active = true;
+            }
             $label = Configuration::get('PAYBOX_CARD_LABEL_'.$id);
             if ($active == false) {
                 $method['active'] = 0;
-			}
+            }
             if ($label !== false) {
                 $method['label'] = $label;
             }
@@ -1050,6 +1034,132 @@ class PayboxHelper extends PayboxAbstract
         $name = Tools::replaceAccentedChars($name);
         $name = trim(preg_replace('/[^-. a-zA-Z0-9]/', '', $name));
         return $name;
+    }
+
+    /**
+     * Format a value to respect specific rules
+     *
+     * @param string $value
+     * @param string $type
+     * @param int $maxLength
+     * @return string
+     */
+    protected function formatTextValue($value, $type, $maxLength = null)
+    {
+        /*
+        AN : Alphanumerical without special characters
+        ANP : Alphanumerical with spaces and special characters
+        ANS : Alphanumerical with special characters
+        N : Numerical only
+        A : Alphabetic only
+        */
+
+        switch ($type) {
+            default:
+            case 'AN':
+                $value = Tools::replaceAccentedChars($value);
+                break;
+            case 'ANP':
+                $value = Tools::replaceAccentedChars($value);
+                $value = preg_replace('/[^-. a-zA-Z0-9]/', '', $value);
+                break;
+            case 'ANS':
+                break;
+            case 'N':
+                $value = preg_replace('/[^0-9.]/', '', $value);
+                break;
+            case 'A':
+                $value = Tools::replaceAccentedChars($value);
+                $value = preg_replace('/[^A-Za-z]/', '', $value);
+                break;
+        }
+        // Remove carriage return characters
+        $value = trim(preg_replace("/\r|\n/", '', $value));
+
+        // Cut the string when needed
+        if (!empty($maxLength) && is_numeric($maxLength) && $maxLength > 0) {
+            if (function_exists('mb_strlen')) {
+                if (mb_strlen($value) > $maxLength) {
+                    $value = mb_substr($value, 0, $maxLength);
+                }
+            } elseif (strlen($value) > $maxLength) {
+                $value = substr($value, 0, $maxLength);
+            }
+        }
+
+        return $value;
+    }
+
+    /**
+     * Import XML content as string and use DOMDocument / SimpleXML to validate, if available
+     *
+     * @param string $xml
+     * @return string
+     */
+    protected function exportToXml($xml)
+    {
+        if (class_exists('DOMDocument')) {
+            $doc = new DOMDocument();
+            $doc->loadXML($xml);
+            $xml = $doc->saveXML();
+        } elseif (function_exists('simplexml_load_string')) {
+            $xml = simplexml_load_string($xml)->asXml();
+        }
+
+        $xml = trim(preg_replace('/(\s*)(' . preg_quote('<?xml version="1.0" encoding="utf-8"?>') . ')(\s*)/', '$2', $xml));
+        $xml = trim(preg_replace("/\r|\n/", '', $xml));
+
+        return $xml;
+    }
+
+    /**
+     * Generate XML value for PBX_BILLING parameter
+     *
+     * @param Cart $cart
+     * @return string
+     */
+    public function getXmlBillingInformation(Cart $cart)
+    {
+        $billingAddress = new Address((int)$cart->id_address_invoice);
+        $firstName = $this->formatTextValue($billingAddress->firstname, 'ANP', 30);
+        $lastName = $this->formatTextValue($billingAddress->lastname, 'ANP', 30);
+        $addressLine1 = $this->formatTextValue($billingAddress->address1, 'ANS', 50);
+        $addressLine2 = $this->formatTextValue($billingAddress->address2, 'ANS', 50);
+        $zipCode = $this->formatTextValue($billingAddress->postcode, 'ANS', 16);
+        $city = $this->formatTextValue($billingAddress->city, 'ANS', 50);
+        $isoCode = Country::getIsoById($billingAddress->id_country);
+        $countryCode = (int)PayboxIso3166Country::getNumericCode($isoCode);
+
+        $xml = sprintf(
+            '<?xml version="1.0" encoding="utf-8"?><Billing><Address><FirstName>%s</FirstName><LastName>%s</LastName><Address1>%s</Address1><Address2>%s</Address2><ZipCode>%s</ZipCode><City>%s</City><CountryCode>%d</CountryCode></Address></Billing>',
+            $firstName,
+            $lastName,
+            $addressLine1,
+            $addressLine2,
+            $zipCode,
+            $city,
+            $countryCode
+        );
+
+        return $this->exportToXml($xml);
+    }
+
+    /**
+     * Generate XML value for PBX_SHOPPINGCART parameter
+     *
+     * @param Cart $cart
+     * @return string
+     */
+    public function getXmlShoppingCartInformation(Cart $cart)
+    {
+        $totalQuantity = 0;
+        foreach ($cart->getProducts() as $item) {
+            $totalQuantity += (int)$item['cart_quantity'];
+        }
+        // totalQuantity must be less or equal than 99
+        $totalQuantity = min($totalQuantity, 99);
+
+        return sprintf('<?xml version="1.0" encoding="utf-8"?><shoppingcart><total><totalQuantity>%d</totalQuantity></total></shoppingcart>', $totalQuantity);
     }
 
     public function getClientIp()
@@ -1201,7 +1311,7 @@ class PayboxHelper extends PayboxAbstract
                     $res = (boolean) openssl_verify($matches[1], $signature, $pubkey);
                 }
 
-                if (preg_match('#^fc=module&module=epayment&controller=validation&t=[s3]&a=[cfrsij]&C=IDEAL&P=PREPAYEE&(.*)&K=(.*)$#', $data, $matches)) {
+                if (preg_match('#^t=[s3]&a=[cfrsij]&C=IDEAL&P=PREPAYEE&(.*)&K=(.*)$#', $data, $matches)) {
                     $signature = base64_decode(urldecode($matches[2]));
                     $res = (boolean) openssl_verify($matches[1], $signature, $pubkey);
                 }
@@ -1597,7 +1707,7 @@ class PayboxHelper extends PayboxAbstract
         } else {
             $message = $this->l('PaymentPlatform Refund partial:').chr(10).chr(13);
         }
-/*
+        /*
         $currency = new Currency(intval($order->id_currency));
 
         // Call error
@@ -1620,7 +1730,7 @@ class PayboxHelper extends PayboxAbstract
         $message .= $this->l('Ref.:').$response['NUMTRANS'].chr(10).chr(13);
         $message .= $this->l('Refund amount:').' '.$amount.' '.$currency->sign.chr(10).chr(13);
         $this->addOrderNote($order, $message);
-*/
+        */
         $changeOrderState = false;
         if ($details['payment_by'] == 'PayboxSystemRecurring') {
             if ($details['payment_status'] == 'canceled') {
@@ -1634,17 +1744,17 @@ class PayboxHelper extends PayboxAbstract
             $status = 'Refunded';
             $changeOrderState = true;
         }
-/*
-        // Update database
-        $sql = 'UPDATE `%spaybox_order` SET `payment_status` = "%s",'
-            .' `id_transaction` = %d, `refund_amount` = refund_amount + %d'
-            .' WHERE `id_order` = %d';
-        $sql = sprintf($sql, _DB_PREFIX_, $status, intval($response['NUMTRANS']),
-            round($amount * $amountScale), $order->id);
-        if (!Db::getInstance()->execute($sql)) {
-            die(Tools::displayError('Error when updating database'));
-        }
-*/
+        /*
+                // Update database
+                $sql = 'UPDATE `%spaybox_order` SET `payment_status` = "%s",'
+                    .' `id_transaction` = %d, `refund_amount` = refund_amount + %d'
+                    .' WHERE `id_order` = %d';
+                $sql = sprintf($sql, _DB_PREFIX_, $status, intval($response['NUMTRANS']),
+                    round($amount * $amountScale), $order->id);
+                if (!Db::getInstance()->execute($sql)) {
+                    die(Tools::displayError('Error when updating database'));
+                }
+        */
         // Change state of order if needed
         if ($changeOrderState) {
             $history = new OrderHistory();
@@ -1831,8 +1941,8 @@ class PayboxHelper extends PayboxAbstract
         $amountInitial = ((int)$details['initial_amount']) / $amountScale;
         $amountCurrent = ((int)$details['amount']) / $amountScale;
 
-/*
- * Allow refund on mixed payment method with allowed refundable amount
+        // Allow refund on mixed payment method with allowed refundable amount
+        /*
         // Retrieve method
         $method = $this->getHelper()->getPaymentMethod($details['carte']);
 
@@ -1853,7 +1963,7 @@ class PayboxHelper extends PayboxAbstract
                 $explicitAmount = $amountCurrent;
             }
         }
-*/
+        */
 
         if ($explicitAmount != 0) {
             $actionType = 'refund';
@@ -1877,8 +1987,8 @@ class PayboxHelper extends PayboxAbstract
                 if ($amountOrder < $amountPaid) {
                     $operationAmount = ($amountPaid - $amountOrder) * -1;
                     $this->logDebug(sprintf('Cart %d: Order %d / %s', $order->id_cart, $order->id, 'Authorization - Refund: '.$operationAmount));
-                } // Rebill
-                elseif ($amountOrder < $amountInitial) {
+                } elseif ($amountOrder < $amountInitial) {
+                    // Rebill
                     $operationAmount = $amountOrder - $amountCurrent;
                     $this->logDebug(sprintf('Cart %d: Order %d / %s', $order->id_cart, $order->id, 'Authorization - Rebill < initial: '.$operationAmount));
                 } else {
@@ -1891,9 +2001,9 @@ class PayboxHelper extends PayboxAbstract
                 }
 
                 return $this->updatePayments($order, $details, $newAmount, $operationAmount, $amountScale, $currency);
-            } // Direct Debit or N Times
-            elseif (($order->hasBeenPaid() && $this->canRefund($orderId)) || $this->isRecurring($orderId)) {
-            // Only Refund allowed
+            } elseif (($order->hasBeenPaid() && $this->canRefund($orderId)) || $this->isRecurring($orderId)) {
+                // Direct Debit or N Times
+                // Only Refund allowed
                 if (($amountOrder < $amountPaid) || ('refund' == $actionType)) {
                     if ('refund' == $actionType) {
                         $operationAmount = ($explicitAmount) * -1;
@@ -1906,8 +2016,8 @@ class PayboxHelper extends PayboxAbstract
                             $newAmount = $amountCurrent + $operationAmount;
                         }
                         $this->logDebug(sprintf('Cart %d: Order %d / %s', $order->id_cart, $order->id, 'Refund action type: '.$operationAmount.' - amount: '.$newAmount));
-                            // $order->total_paid_real = ($newAmount < 0) ? 0 : $newAmount;
-                            // $order->update();
+                        // $order->total_paid_real = ($newAmount < 0) ? 0 : $newAmount;
+                        // $order->update();
                     } else {
                         $operationAmount = ($amountPaid - $amountOrder) * -1;
                         // [2.2.2] Captured amount can be different from the order paid amount, use of the captured amount which is the official one

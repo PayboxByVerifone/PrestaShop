@@ -13,7 +13,7 @@
 * support@paybox.com so we can mail you a copy immediately.
 *
 *  @category  Module / payments_gateways
-*  @version   3.0.14
+*  @version   3.0.11
 *  @author    BM Services <contact@bm-services.com>
 *  @copyright 2012-2017 Verifone e-commerce
 *  @license   http://opensource.org/licenses/OSL-3.0
@@ -252,61 +252,7 @@ EOF;
             $this->getConfig()->getDebitType() == 'receive'
         );
 
-        // 3-D Secure: enable/disable
-        // [3.0.6] Always enabled, only amount configuration to disable 3DS
-        $w->formSelect(
-            'PAYBOX_3DS',
-            $this->l('Activate 3D-Secure'),
-            array(
-                '0'=>$this->l('FALSE '),
-                '1'=>$this->l('TRUE '),
-            ),
-            // $this->getConfig()->get3DSEnabled(),
-            '1',
-            '0',
-            $this->l('Warning : your bank may enforce 3D Secure. Make sure your set up is coherent with your Bank, PaymentPlatform and Prestashop'),
-            false
-        );
-        $js = <<<EOF
-$('#PAYBOX_3DS').change(function() {
-    var alert = $('#PAYBOX_3DS_alert');
-    var npt = $('#PAYBOX_3DS_MIN_AMOUNT_container');
-    if (this.value == 1) {
-        alert.show('normal');
-        npt.show('normal');
-        npt2.show('normal');
-    }
-    else {
-        alert.hide('normal');
-        npt.hide('normal');
-        npt2.hide('normal');
-    }
-}).change();
-
-EOF;
-        $w->js($js);
-
-        // 3-D Secure: alert
-        $w->formAlert(
-            'PAYBOX_3DS_alert',
-            // $this->l('Make sure that the contract signed with your bank allows 3D-Secure before proceeding with setup.'),
-            $this->l('Warning : your bank may enforce 3D Secure. Make sure your set up is coherent with your Bank, PaymentPlatform and Prestashop'),
-            $this->getConfig()->get3DSEnabled() == '1',
-            '-60px'
-        );
-
-        // 3-D Secure: minimal amount
-        $w->formText(
-            'PAYBOX_3DS_MIN_AMOUNT',
-            $this->l('Minimum amount order 3D-Secure'),
-            $this->getConfig()->get3DSAmount(),
-            $this->l('Leave empty for all payments using the 3D-Secure authentication'),
-            3,
-            null,
-            $this->getConfig()->get3DSEnabled() == '1'
-        );
-        
-        // minimal amount
+        // Minimum amount
         $w->formText(
             'PAYBOX_MIN_AMOUNT',
             $this->l('Minimum amount order'),
@@ -315,7 +261,7 @@ EOF;
             3,
             null,
             true
-            );
+        );
 
         // maximal amount
         $w->formText(
@@ -326,7 +272,7 @@ EOF;
             3,
             null,
             true
-            );
+        );
 
         // Threetime: enable/disable
         $w->formSelect(
@@ -405,7 +351,7 @@ EOF;
             null,
             $this->getConfig()->isRecurringEnabled()
         );
-
+        
         // [3.0.4] Display Payment method
         $optionsDisplay = array(
             0 => $this->l('Payment module (ex: ').'Verifone e-commerce)',
@@ -445,7 +391,7 @@ EOF;
             'PAYBOX_BO_ACTIONS_alert',
             $this->l('Automation of Back Office actions will trigger refunds for every modification of an order amount (production cancellation, product price modification...).')
         );
-
+        
         // Save button
         $w->formButton(null, $this->l('Save settings'));
 
@@ -791,17 +737,6 @@ EOF;
             $this->l('Mixed payment method (may have several payment notifications)')
         );
 
-        // 3DS
-        $w->formSelect(
-            '3ds',
-            $this->l('3-D Secure'),
-            array(
-                '0' => $this->l('Not supported'),
-                '1' => $this->l('Optional'),
-                '2' => $this->l('Mandatory'),
-            )
-        );
-
         $w->html('</div></div>');
 
         $w->html('<div class="row"><div class="col-xs-12">');
@@ -1051,8 +986,8 @@ EOF;
             .'WHERE type_payment = \''.$db->escape($paymentType)
             .'\' AND type_card = \''.$db->escape($cardType).'\'';
         if ($db->getValue($sql)) {
-             $this->_newCardError = $this->l('This card already Exists');
-             return '';
+            $this->_newCardError = $this->l('This card already Exists');
+            return '';
         }
 
         // Save image
@@ -1148,7 +1083,7 @@ EOF;
                 Db::getInstance()->execute($sql);
             }
         }
-/*
+        /*
         // Kwixo
         Configuration::updateValue('PAYBOX_DEFAULTCATEGORYID', intval($_POST['category_id']));
         Configuration::updateValue('PAYBOX_NBDELIVERYDAYS', intval(Tools::getValue('PAYBOX_NBDELIVERYDAYS')));
@@ -1162,7 +1097,7 @@ EOF;
                 Configuration::updateValue('PAYBOX_CARRIER_DAYS_'.$carrier['id_carrier'], stripslashes($values['days']));
             }
         }
-*/
+        */
         $categories = Category::getSimpleCategories(Configuration::get('PS_LANG_DEFAULT'));
         foreach ($categories as $categorie) {
             if (isset($_POST['cat_'.$categorie['id_category']])) {

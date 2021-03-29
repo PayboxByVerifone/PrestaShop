@@ -218,7 +218,7 @@ class PayboxKwixo
         } else {
             $str = preg_replace('/[^a-zA-Z0-9\s\'\:\/\[\]-]/', '', $str);
         }
-        
+
         $str = preg_replace('/[\s\'\:\/\[\]-]+/', ' ', $str);
         //$str = str_replace(array(' ', '/'), '-', $str);
 

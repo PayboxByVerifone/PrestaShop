@@ -34,43 +34,42 @@
  */
 class EpaymentRedirectModuleFrontController extends ModuleFrontController
 {
-	/**
+    /**
      * @see FrontController::postProcess()
      */
     public function postProcess()
     {
-		$action = isset($_GET['a']) ? $_GET['a'] : null;
-		$c = new PayboxController();
-		try {
-			switch ($action) {
-				// Cancel
-				case 'c':
-					$c->cancelAction();
-					break;
+        $action = isset($_GET['a']) ? $_GET['a'] : null;
+        $c = new PayboxController();
+        try {
+            switch ($action) {
+                // Cancel
+                case 'c':
+                    $c->cancelAction();
+                    break;
 
-				// Failure
-				case 'f':
-					$c->failureAction();
-					break;
+                // Failure
+                case 'f':
+                    $c->failureAction();
+                    break;
 
-				// Redirect
-				case 'r':
-					$c->redirectAction();
-					break;
+                // Redirect
+                case 'r':
+                    $c->redirectAction();
+                    break;
 
-				// Success
-				case 's':
-					$c->successAction();
-					break;
+                // Success
+                case 's':
+                    $c->successAction();
+                    break;
 
 
-				default:
-					$c->defaultAction();
-			}
-		} catch (Exception $e) {
-			header('Status: 500 Error', true, 500);
-			echo $e->getMessage();
-		}
-	}
+                default:
+                    $c->defaultAction();
+            }
+        } catch (Exception $e) {
+            header('Status: 500 Error', true, 500);
+            echo $e->getMessage();
+        }
+    }
 }
-?>

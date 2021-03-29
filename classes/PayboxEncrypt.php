@@ -65,14 +65,14 @@ class PayboxEncrypt
             $key .= substr($key, 0, 24 - strlen($key));
         }
 
-        if(function_exists('openssl_encrypt')) {
+        if (function_exists('openssl_encrypt')) {
             $ivlen = openssl_cipher_iv_length($cipher='AES-128-CBC');
             $iv = openssl_random_pseudo_bytes($ivlen);
             $ciphertext_raw = openssl_encrypt($data, $cipher, $key, $options=OPENSSL_RAW_DATA, $iv);
             $hmac = hash_hmac('sha256', $ciphertext_raw, $key, $as_binary=true);
             $result = base64_encode($iv.$hmac.$ciphertext_raw);
-        } elseif(function_exists('mcrypt_module_open')) {
-             // First encode data to base64 (see end of descrypt)
+        } elseif (function_exists('mcrypt_module_open')) {
+            // First encode data to base64 (see end of descrypt)
             $data = base64_encode($data);
 
             // Prepare mcrypt
@@ -119,7 +119,7 @@ class PayboxEncrypt
             $key .= substr($key, 0, 24 - strlen($key));
         }
 
-        if(function_exists('openssl_encrypt')) {
+        if (function_exists('openssl_encrypt')) {
             $c = base64_decode($data);
             $ivlen = openssl_cipher_iv_length($cipher='AES-128-CBC');
             $iv = substr($c, 0, $ivlen);
@@ -132,30 +132,28 @@ class PayboxEncrypt
             if (!hash_equals($hmac, $calcmac)) {
                 $result = '';
             }
-			if(!$result && function_exists('mcrypt_encrypt')){
-				// First decode encrypted message (see end of encrypt)
-				$data = base64_decode($data);
+            if (!$result && function_exists('mcrypt_encrypt')) {
+                // First decode encrypted message (see end of encrypt)
+                $data = base64_decode($data);
 
-				// Prepare mcrypt
-				$td = mcrypt_module_open(MCRYPT_3DES, '', MCRYPT_MODE_ECB, '');
+                // Prepare mcrypt
+                $td = mcrypt_module_open(MCRYPT_3DES, '', MCRYPT_MODE_ECB, '');
 
-				// Init vector
-				$size = mcrypt_enc_get_iv_size($td);
-				$iv = mcrypt_create_iv($size, MCRYPT_RAND);
-				mcrypt_generic_init($td, $key, $iv);
+                // Init vector
+                $size = mcrypt_enc_get_iv_size($td);
+                $iv = mcrypt_create_iv($size, MCRYPT_RAND);
+                mcrypt_generic_init($td, $key, $iv);
 
-				// Decrypt
-				$result = mdecrypt_generic($td, $data);
+                // Decrypt
+                $result = mdecrypt_generic($td, $data);
 
-				// Remove any null char (data is base64 encoded so no data loose)
-				$result = rtrim($result, "\0");
+                // Remove any null char (data is base64 encoded so no data loose)
+                $result = rtrim($result, "\0");
 
-				// Decode data
-				$result = base64_decode($result);
-				
-			}
-		}
-		elseif(function_exists('mcrypt_encrypt')) {
+                // Decode data
+                $result = base64_decode($result);
+            }
+        } elseif (function_exists('mcrypt_encrypt')) {
             // First decode encrypted message (see end of encrypt)
             $data = base64_decode($data);
 
