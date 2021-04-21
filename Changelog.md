@@ -1,4 +1,8 @@
 # Change Log
+## [3.0.201] 2021-04-21
+### Ajouts & Corrections
+- Updating Certificate bundle
+to fix platform unavailable 
 
 ## [3.0.20] 2021-03-16
 ### Ajouts & Corrections
