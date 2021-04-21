@@ -70,7 +70,7 @@ class PayboxCurl
         $headers = preg_split("#(\r\n|\r|\n)#", $parts[0]);
         $status = array_shift($headers);
 
-        if (!preg_match('#^HTTP/[0-9]\.[0-9] ([0-9]{3}) (.*)$#i', $status, $matches)) {
+        if (!preg_match('#^HTTP/[0-9.]+ ([0-9]{3}) (.*)$#i', $status, $matches)) {
             throw new Exception('Invalid status returned by remote server');
         }
         $code = intval($matches[1]);
