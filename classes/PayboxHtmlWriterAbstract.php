@@ -79,7 +79,7 @@ abstract class PayboxHtmlWriterAbstract
     abstract public function formLabel($name, $label);
     abstract public function formSelect($name, $label, array $options, $current = null, $default = null, $description = null, $show = true, $sortOptions = true);
     abstract public function formStart($id, $action);
-    abstract public function formText($name, $label, $current = '', $description = null, $size = null, $more = null, $show = true);
+    abstract public function formText($name, $label, $current = '', $description = null, $attributes = array(), $more = null, $show = true);
     abstract public function select($name, array $options, $current = null);
     abstract public function helpWidget($title, $subtitle, $link);
     abstract public function badge($text, $mode);

@@ -105,8 +105,6 @@ $_MODULE['<{epayment}prestashop>payboxadminconfig_756d97bb256b8580d4d71ee0c54780
 $_MODULE['<{epayment}prestashop>payboxadminconfig_78838b09628efceff97df397cf4cf905'] = 'En mode test, les paiements ne seront pas réalisés.';
 $_MODULE['<{epayment}prestashop>payboxadminconfig_c71cd00d2ec54154cff67146c1438ae3'] = 'Vérifiez vos contrats avant d\'activer ce moyen de paiement';
 $_MODULE['<{epayment}prestashop>payboxadminconfig_fb9696953011b5d2a699563e7f8fa867'] = 'Solution Verifone e-commerce souscrite';
-$_MODULE['<{epayment}prestashop>payboxadminconfig_ffa86aa3d2493ff574c31563919a086c'] = 'Pour obtenir votre mot de passe, souscrivez à l\'option Verifone e-commerce adéquate.';
-$_MODULE['<{epayment}prestashop>payboxadminconfig_e73be65b31bc5e4c678a8b566f4d43e0'] = 'Mot de passe du Back-Office Verifone e-commerce';
 $_MODULE['<{epayment}prestashop>payboxadminconfig_d30514488db93c2dd254168d89845941'] = 'Statut après paiement';
 $_MODULE['<{epayment}prestashop>payboxadminconfig_edfb5491566f6e1a441ab2519e926297'] = 'Etat de la commande si le paiement est accepté';
 $_MODULE['<{epayment}prestashop>payboxadminconfig_5f08ab58c9e23dd04395c8ec9a5b0480'] = 'Type de débit';
@@ -175,9 +173,6 @@ $_MODULE['<{epayment}prestashop>payboxadminconfig_749e8b120e4e0f6af3461906b15099
 $_MODULE['<{epayment}prestashop>payboxadminconfig_8c2857a9ad1d8f31659e35e904e20fa6'] = 'Logo';
 $_MODULE['<{epayment}prestashop>payboxadminconfig_d7f24700d7522ea794b9f0fcb690e0d8'] = 'débit à l\'expédition';
 $_MODULE['<{epayment}prestashop>payboxadminconfig_5e7314a997ff10d73cee9034d0513fc2'] = 'Moyen de paiement mixte (peut recevoir plusieurs notifications de paiement)';
-$_MODULE['<{epayment}prestashop>payboxadminconfig_217c01a08bee4c2fa33d59a6ddc69806'] = '3-D Secure';
-$_MODULE['<{epayment}prestashop>payboxadminconfig_aa7f77e663b832d5b0e544c5511e680c'] = 'Non supporté';
-$_MODULE['<{epayment}prestashop>payboxadminconfig_e89ab59baea830bd940c300886c50efe'] = 'Obligatoire';
 $_MODULE['<{epayment}prestashop>payboxadminconfig_469ab723ab01f00c800a935ff51d3c8c'] = 'Ajouter une carte';
 $_MODULE['<{epayment}prestashop>payboxadminconfig_03b20e20e097cee014e5f889ac92cafc'] = 'Les identifiants par défaut ci-dessous sont ceux d\'un compte de test générique. Une fois votre compte enregistré avec Verifone e-commerce, vos identifiants dédiés vous seront transmis par e-mail.';
 $_MODULE['<{epayment}prestashop>payboxadminconfig_a7d6475ec8993b7224d6facc8cb0ead6'] = 'Numéro de site';

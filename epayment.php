@@ -13,7 +13,7 @@
 * support@paybox.com so we can mail you a copy immediately.
 *
 *  @category  Module / payments_gateways
-*  @version   3.0.201
+*  @version   3.1.0
 *  @author    BM Services <contact@bm-services.com>
 *  @copyright 2012-2017 Verifone e-commerce
 *  @license   http://opensource.org/licenses/OSL-3.0
@@ -46,7 +46,7 @@ class Epayment extends PaymentModule
 
         $this->name = 'epayment';
         $this->tab = 'payments_gateways';
-        $this->version = '3.0.201';
+        $this->version = '3.1.0';
         $this->author = 'Verifone e-commerce';
         $this->bootstrap = true;
 
@@ -895,7 +895,7 @@ class Epayment extends PaymentModule
             $paymentName = $this->getHelper()->getDisplayName($this->displayName, $params['cardType']);
             $result = parent::validateOrder($cart->id, $state, $amount, $paymentName, $message, array('transaction_id' => $params['transaction']), null, $cart->id_currency, $cart->secure_key);
         } catch (Exception $e) {
-            $this->logFatal(sprintf('Cart %d: Error validating PrestaShop order:', $cart->id, $e->getMessage()));
+            $this->logFatal(sprintf('Cart %d: Error validating PrestaShop order: %s', $cart->id, $e->getMessage()));
         }
 
         if (!$result) {
@@ -969,7 +969,7 @@ class Epayment extends PaymentModule
                 $paymentName = $this->getHelper()->getDisplayName($this->displayName, $params['cardType']);
                 $result = parent::validateOrder($cart->id, $state, $orderAmount, $paymentName, $message, array('transaction_id' => $params['transaction']), null, false, $cart->secure_key);
             } catch (Exception $e) {
-                $this->logFatal(sprintf('Cart %d: Error validating PrestaShop order:', $cart->id, $e->getMessage()));
+                $this->logFatal(sprintf('Cart %d: Error validating PrestaShop order: %s', $cart->id, $e->getMessage()));
             }
 
             if (!$result) {
@@ -1119,7 +1119,7 @@ class Epayment extends PaymentModule
                 $paymentName = $this->getHelper()->getDisplayName($this->displayName, $params['cardType'], '3');
                 $result = parent::validateOrder($cart->id, $state, $orderAmount, $paymentName, $message, $params, null, false, $cart->secure_key);
             } catch (Exception $e) {
-                $this->logFatal(sprintf('Cart %d: Error validating PrestaShop order:', $cart->id, $e->getMessage()));
+                $this->logFatal(sprintf('Cart %d: Error validating PrestaShop order: %s', $cart->id, $e->getMessage()));
             }
 
             if (!$result) {
@@ -1145,7 +1145,7 @@ class Epayment extends PaymentModule
             $varsTpl = array(
                 '{lastname}' => $customer->lastname,
                 '{firstname}' => $customer->firstname,
-                '{id_order}' => $orderId,
+                '{id_order}' => $order->id,
                 '{message}' => $message
             );
 

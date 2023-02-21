@@ -36,7 +36,6 @@ class PayboxConfig
         'PAYBOX_HASH'                  => 'SHA512',
         'PAYBOX_IDENTIFIANT'           => '3262411',
         'PAYBOX_KEYTEST'               => '0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF',
-        'PAYBOX_PASS'                  => '1999888I',
         'PAYBOX_PRODUCTION'            => 0,
         'PAYBOX_RANG'                  => '77',
         'PAYBOX_SITE'                  => '1999888',
@@ -240,15 +239,6 @@ class PayboxConfig
     public function getPaypalHoldState()
     {
         return $this->_get('PAYBOX_PAYPAL_HOLD');
-    }
-
-    public function getPassword()
-    {
-        $value = $this->_get('PAYBOX_PASS');
-        $crypt = new PayboxEncrypt();
-        $value = $crypt->decrypt($value);
-
-        return $value;
     }
 
     public function getRank()

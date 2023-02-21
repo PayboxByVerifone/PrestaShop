@@ -1,8 +1,12 @@
 # Change Log
+## [3.1.0] 2023-02-08
+### Modifications
+- Update 3DSv2 fields
+- HMAC auth
+
 ## [3.0.201] 2021-04-21
 ### Ajouts & Corrections
-- Updating Certificate bundle
-to fix platform unavailable 
+- Updating Certificate bundle to fix platform unavailable
 
 ## [3.0.20] 2021-03-16
 ### Ajouts & Corrections

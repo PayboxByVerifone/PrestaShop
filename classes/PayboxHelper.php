@@ -334,7 +334,6 @@ class PayboxHelper extends PayboxAbstract
         $fields = array(
             'ACTIVITE' => '024',
             'VERSION' => $version,
-            'CLE' => $this->getConfig()->getPassword(),
             'DATEQ' => $now->format('dmYHis'),
             'DEVISE' => sprintf('%03d', $currency),
             'IDENTIFIANT' => $this->getConfig()->getIdentifier(),
@@ -346,6 +345,7 @@ class PayboxHelper extends PayboxAbstract
             'REFERENCE' => $order->id_cart.' - '.$this->getBillingName($customer),
             'SITE' => sprintf('%07d', $this->getConfig()->getSite()),
             'TYPE' => $type,
+            'HASH' => strtoupper($this->getConfig()->getHmacAlgo()),
         );
 
         // Add ACQUEREUR for some cards
@@ -354,6 +354,12 @@ class PayboxHelper extends PayboxAbstract
                 $fields['ACQUEREUR'] = 'PAYPAL';
                 break;
         }
+
+        // Sort parameters for simpler debug
+        ksort($fields);
+
+        // Sign values
+        $fields['HMAC'] = $this->signValues($fields);
 
         $urls = $this->getConfig()->getDirectUrls();
         $url = $this->checkUrls($urls);
@@ -715,10 +721,7 @@ class PayboxHelper extends PayboxAbstract
         ksort($values);
 
         // Sign values
-        $sign = $this->signValues($values);
-
-        // Hash HMAC
-        $values['PBX_HMAC'] = $sign;
+        $values['PBX_HMAC'] = $this->signValues($values);
 
         return $values;
     }
@@ -1064,6 +1067,7 @@ class PayboxHelper extends PayboxAbstract
                 $value = preg_replace('/[^-. a-zA-Z0-9]/', '', $value);
                 break;
             case 'ANS':
+                $value = Tools::replaceAccentedChars($value);
                 break;
             case 'N':
                 $value = preg_replace('/[^0-9.]/', '', $value);
@@ -1087,7 +1091,7 @@ class PayboxHelper extends PayboxAbstract
             }
         }
 
-        return $value;
+        return trim($value);
     }
 
     /**
@@ -1121,17 +1125,17 @@ class PayboxHelper extends PayboxAbstract
     public function getXmlBillingInformation(Cart $cart)
     {
         $billingAddress = new Address((int)$cart->id_address_invoice);
-        $firstName = $this->formatTextValue($billingAddress->firstname, 'ANP', 30);
-        $lastName = $this->formatTextValue($billingAddress->lastname, 'ANP', 30);
+        $firstName = $this->formatTextValue($billingAddress->firstname, 'ANS', 22);
+        $lastName = $this->formatTextValue($billingAddress->lastname, 'ANS', 22);
         $addressLine1 = $this->formatTextValue($billingAddress->address1, 'ANS', 50);
         $addressLine2 = $this->formatTextValue($billingAddress->address2, 'ANS', 50);
-        $zipCode = $this->formatTextValue($billingAddress->postcode, 'ANS', 16);
+        $zipCode = $this->formatTextValue($billingAddress->postcode, 'ANS', 10);
         $city = $this->formatTextValue($billingAddress->city, 'ANS', 50);
         $isoCode = Country::getIsoById($billingAddress->id_country);
         $countryCode = (int)PayboxIso3166Country::getNumericCode($isoCode);
 
         $xml = sprintf(
-            '<?xml version="1.0" encoding="utf-8"?><Billing><Address><FirstName>%s</FirstName><LastName>%s</LastName><Address1>%s</Address1><Address2>%s</Address2><ZipCode>%s</ZipCode><City>%s</City><CountryCode>%d</CountryCode></Address></Billing>',
+            '<?xml version="1.0" encoding="utf-8"?><Billing><Address><FirstName>%s</FirstName><LastName>%s</LastName><Address1>%s</Address1><Address2>%s</Address2><ZipCode>%s</ZipCode><City>%s</City><CountryCode>%03d</CountryCode></Address></Billing>',
             $firstName,
             $lastName,
             $addressLine1,
@@ -1157,7 +1161,7 @@ class PayboxHelper extends PayboxAbstract
             $totalQuantity += (int)$item['cart_quantity'];
         }
         // totalQuantity must be less or equal than 99
-        $totalQuantity = min($totalQuantity, 99);
+        $totalQuantity = max(1, min($totalQuantity, 99));
 
         return sprintf('<?xml version="1.0" encoding="utf-8"?><shoppingcart><total><totalQuantity>%d</totalQuantity></total></shoppingcart>', $totalQuantity);
     }

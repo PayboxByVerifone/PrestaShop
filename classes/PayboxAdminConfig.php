@@ -113,63 +113,6 @@ EOF;
             $this->getConfig()->getSubscription(),
             null
         );
-        $js = <<<EOF
-$('#PAYBOX_WEB_CASH_DIRECT').change(function() {
-    var div = $('#PAYBOX_PASS_container');
-    var alert = $('#PAYBOX_PASS_alert');
-    var opt = $('#PAYBOX_WEB_CASH_TYPE option[value=receive]');
-    if (this.value == 1 || this.value == 2) {
-        var npt = $('#PAYBOX_PASS');
-        div.show('normal');
-        if (npt.val().length >= 8) {
-            alert.hide('normal');
-        }
-        else {
-            alert.show('normal');
-        }
-        opt.removeAttr('disabled');
-    }
-    else {
-        div.hide('normal');
-        alert.hide('normal');
-        opt.attr('disabled', 'true');
-    }
-}).change();
-EOF;
-        $w->js($js);
-
-        // Warning about password
-        $w->formAlert(
-            'PAYBOX_PASS_alert',
-            $this->l('To get your password, subscribe to the appropriate PaymentPlatform option.'),
-            ($this->getConfig()->getSubscription() == '1' || $this->getConfig()->getSubscription() == '2') && (strlen($this->getConfig()->getPassword()) < 8)
-        );
-
-        // Password
-        $w->formText(
-            'PAYBOX_PASS',
-            $this->l('Back-Office password'),
-            $this->getConfig()->getPassword(),
-            null,
-            40,
-            null,
-            $this->getConfig()->getSubscription() == '1'
-        );
-        $js = <<<EOF
-$('#PAYBOX_PASS').change(function() {
-    var opt = $('#PAYBOX_WEB_CASH_DIRECT').val();
-    if (opt == 1 || opt == 2) {
-        var alert = $('#PAYBOX_PASS_alert');
-        if (this.value.length >= 8) {
-            alert.hide('normal');
-        }
-        else {
-            alert.show('normal');
-        }
-    }
-}).change();
-EOF;
-        $w->js($js);
 
         // Order state after payment
         $options = array();
@@ -258,7 +201,11 @@ EOF;
             $this->l('Minimum amount order'),
             $this->getConfig()->getMinAmount(),
             $this->l('Set the minimum order amount to display of the payment mean'),
-            3,
+            array(
+                'type' => 'number',
+                'class' => 'form-control',
+                'size' => 3,
+            ),
             null,
             true
         );
@@ -269,7 +216,11 @@ EOF;
             $this->l('Maximum amount order'),
             $this->getConfig()->getMaxAmount(),
             $this->l('Set the maximum order amount to display of the payment mean'),
-            3,
+            array(
+                'type' => 'number',
+                'class' => 'form-control',
+                'size' => 3,
+            ),
             null,
             true
         );
@@ -320,7 +271,11 @@ EOF;
             $this->l('Minimum amount order paid in three times'),
             $this->getConfig()->getRecurringMinimalAmount(),
             $this->l('Leave blank if there is no minimum order'),
-            3,
+            array(
+                'type' => 'number',
+                'class' => 'form-control',
+                'size' => 3,
+            ),
             null,
             $this->getConfig()->isRecurringEnabled()
         );
@@ -351,7 +306,6 @@ EOF;
             null,
             $this->getConfig()->isRecurringEnabled()
         );
-        
         // [3.0.4] Display Payment method
         $optionsDisplay = array(
             0 => $this->l('Payment module (ex: ').'Verifone e-commerce)',
@@ -391,7 +345,6 @@ EOF;
             'PAYBOX_BO_ACTIONS_alert',
             $this->l('Automation of Back Office actions will trigger refunds for every modification of an order amount (production cancellation, product price modification...).')
         );
-        
         // Save button
         $w->formButton(null, $this->l('Save settings'));
 
@@ -678,7 +631,10 @@ EOF;
             $this->l('Card Label'),
             '',
             $this->l('Display to order page'),
-            40
+            array(
+                'type' => 'text',
+                'size' => 40,
+            )
         );
 
         // Type
@@ -687,7 +643,10 @@ EOF;
             $this->l('PBX_TYPEPAIEMENT'),
             '',
             $this->l('See PaymentPlatform manual for allowed values'),
-            40
+            array(
+                'type' => 'text',
+                'size' => 40,
+            )
         );
 
         // Type
@@ -696,7 +655,10 @@ EOF;
             $this->l('PBX_TYPECARTE'),
             '',
             $this->l('See PaymentPlatform manual for allowed values'),
-            40
+            array(
+                'type' => 'text',
+                'size' => 40,
+            )
         );
 
         $w->html('</div><div class="col-md-6">');
@@ -805,28 +767,44 @@ EOF;
             $this->l('Site'),
             $site,
             $this->l('Site number (provided by PaymentPlatform).'),
-            40
+            array(
+                'type' => 'text',
+                'size' => 40,
+                'pattern' => '[0-9]{1,7}',
+            )
         );
         $w->formText(
             'PAYBOX_RANG',
             $this->l('Rank'),
             $rank,
             $this->l('Rank number (provided by PaymentPlatform).'),
-            40
+            array(
+                'type' => 'text',
+                'size' => 40,
+                'pattern' => '[0-9]{1,3}',
+            )
         );
         $w->formText(
             'PAYBOX_IDENTIFIANT',
             $this->l('Identifier'),
             $identifier,
             $this->l('PaymentPlatform identifier (provided by PaymentPlatform).'),
-            40
+            array(
+                'type' => 'text',
+                'size' => 40,
+                'pattern' => '[0-9]+',
+            )
         );
         $w->formText(
             'PAYBOX_KEYTEST',
             $this->l('HMAC key'),
             $hmacKey,
             $this->l('Secret HMAC key created using the PaymentPlatform Back-Office.'),
-            40
+            array(
+                'type' => 'text',
+                'size' => 40,
+                'pattern' => '[0-9a-fA-F]{128}',
+            )
         );
 
         $w->formButton(null, $this->l('Save settings'));
@@ -1056,7 +1034,6 @@ EOF;
         $crypt = new PayboxEncrypt();
         $encryptedKeys = array(
             'PAYBOX_KEYTEST',
-            'PAYBOX_PASS',
         );
 
         // Saving parameters

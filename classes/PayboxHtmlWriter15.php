@@ -196,14 +196,14 @@ class PayboxHtmlWriter extends PayboxHtmlWriterAbstract
         $this->html(sprintf($tpl, $this->escape($id), $this->escape($action)));
     }
 
-    public function formText($name, $label, $current = '', $description = null, $size = null, $more = null, $show = true)
+    public function formText($name, $label, $current = '', $description = null, $attributes = array(), $more = null, $show = true)
     {
         $this->formElementStart($name, $label, $show);
         $attrs = '';
-        if (!empty($size)) {
-            $attrs = sprintf(' size="%d"', intval($size));
+        foreach ($attributes as $attributeName => $attributeValue) {
+            $attrs .= sprintf(' %s="%s"', $attributeName, $attributeValue);
         }
-        $this->html(sprintf('<input type="text" id="%s" name="%s" value="%s"%s/>', $this->escape($name), $this->escape($name), $this->escape($current), $attrs));
+        $this->html(sprintf('<input %s id="%s" name="%s" value="%s" />', $attrs, $this->escape($name), $this->escape($name), $this->escape($current)));
         if ($more) {
             $this->html(sprintf('<b>&nbsp;&nbsp;%s</b>', $more));
         }

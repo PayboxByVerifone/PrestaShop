@@ -61,7 +61,6 @@ class PayboxInstaller
         $crypt = new PayboxEncrypt();
         $encryptedKeys = array(
             'PAYBOX_KEYTEST',
-            'PAYBOX_PASS',
         );
 
         foreach ($module->getConfig()->getDefaults() as $name => $default) {
@@ -95,7 +94,6 @@ class PayboxInstaller
                 );
             }
         }
-        
         return array(
             'status' => true
         );
@@ -781,7 +779,6 @@ class PayboxInstaller
         // Configuration::deleteByName('PAYBOX_ID_ORDER_STATE_NX');
         // Configuration::deleteByName('PAYBOX_RECEIVE_PAY');
         // Configuration::deleteByName('PAYBOX_STATE_MIN_CAPTURE');
-        
         return true;
     }
 
@@ -799,7 +796,7 @@ class PayboxInstaller
             WHERE TABLE_SCHEMA = "'._DB_NAME_.'" AND TABLE_NAME = "'.$table.'" AND COLUMN_NAME = "'.$column.'"');
         return ($result !== false);
     }
-    
+
     private function configurationToKeep()
     {
         return array(
