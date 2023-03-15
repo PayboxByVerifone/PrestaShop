@@ -604,6 +604,8 @@ class Epayment extends PaymentModule
             return;
         }
 
+        $w = new PayboxHtmlWriter();
+
         // Load order
         $order = new Order($orderId);
         if (!Validate::isLoadedObject($order)) {
@@ -1200,7 +1202,7 @@ class Epayment extends PaymentModule
                     $this->getHelper()->updateOrderRecurringDetails($order, $details['amount_paid'] + $platformAmount, 0);
 
                     // Info
-                    $message .= sprintf($this->l('Third payment capture of %s %s done.'), sprintf($amountFormat, $amount), $currency->sign) . "\r\n";
+                    $message  = sprintf($this->l('Third payment capture of %s %s done.'), sprintf($amountFormat, $amount), $currency->sign) . "\r\n";
                     $message .= $this->l('No more capture is pending.') . "\r\n";
                     $this->getHelper()->addOrderNote($order, $message);
                     $this->logDebug(sprintf('Cart %d: %s', $cart->id, $message));
@@ -1262,7 +1264,9 @@ class Epayment extends PaymentModule
         $file = sprintf('%s/logs/log_%s.log', dirname(__FILE__), date('Y-m-d'));
         $dir = dirname($file);
         if (!is_dir($dir)) {
-            @mkdir($dir, 0777, true);
+            if (!mkdir($dir, 0777, true) && !is_dir($dir)) {
+                throw new \RuntimeException(sprintf('Directory "%s" was not created', $dir));
+            }
         }
         file_put_contents($file, $message, FILE_APPEND);
     }
