@@ -35,9 +35,9 @@
 class EpaymentRedirectModuleFrontController extends ModuleFrontController
 {
     /**
-     * @see FrontController::postProcess()
+     * @see FrontController::display()
      */
-    public function postProcess()
+    public function display()
     {
         $action = isset($_GET['a']) ? $_GET['a'] : null;
         $c = new PayboxController();

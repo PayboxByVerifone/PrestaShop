@@ -206,7 +206,7 @@ class PayboxController extends PayboxAbstract
             */
 
             // Check required parameters
-            $requiredParams = array('amount', 'transaction', 'error', 'reference', 'sign', 'date', 'time');
+            $requiredParams = array('amount', 'transaction', 'error', 'reference', 'sign');
             foreach ($requiredParams as $requiredParam) {
                 if (!isset($params[$requiredParam])) {
                     $message = sprintf($this->l('Missing %s parameter in Verifone e-commerce call'), $requiredParam);
@@ -272,6 +272,10 @@ class PayboxController extends PayboxAbstract
     public function redirectAction()
     {
         global $cart;
+
+        if (empty($cart)) {
+            $cart = Context::getContext()->cart;
+        }
 
         if (!Validate::isLoadedObject($cart)) {
             throw new Exception($this->l('No cart found'));

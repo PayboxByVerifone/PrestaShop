@@ -54,6 +54,10 @@ class PayboxAdminConfig extends PayboxAbstractAdmin
     {
         global $cookie;
 
+        if (empty($cookie)) {
+            $cookie = $this->context->cookie;
+        }
+
         $label = $this->l('Configuration');
         $w->blockStart('paybox_config_block', $label, $this->getImagePath().'server.png');
 
@@ -374,8 +378,6 @@ EOF;
 
     private function _writeMethodsBlock(PayboxHtmlWriter $w)
     {
-        global $cookie,$currentIndex;
-
         $label = $this->l('Contracts');
         $w->blockStart('paybox_methods_block', $label, $this->getImagePath().'money.png');
 
@@ -443,8 +445,7 @@ EOF;
             $w->html('</div>');
 
             $w->html('<div class="pbx_action">');
-            $label = sprintf('<img src="%s"/> %s', _PS_IMG_.'admin/delete.gif', $this->l('Delete'));
-            $w->button($label, 'button');
+            $w->button($this->l('Delete'), 'button', 'btn-danger');
             $w->html('</div>');
 
             $w->html('</div>');
@@ -863,7 +864,7 @@ EOF;
                 $responseContent = $response['body'];
                 $this->getModule()->logDebug(sprintf(' Verifone e-commerce version check answer: %s', $responseContent));
 
-                $responseContent = Tools::jsonDecode($responseContent);
+                $responseContent = json_decode($responseContent);
                 return $responseContent;
             }
         } catch (Exception $e) {

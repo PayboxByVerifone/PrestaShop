@@ -13,7 +13,7 @@
 * support@paybox.com so we can mail you a copy immediately.
 *
 *  @category  Module / payments_gateways
-*  @version   3.1.0
+*  @version   3.2.0
 *  @author    BM Services <contact@bm-services.com>
 *  @copyright 2012-2017 Verifone e-commerce
 *  @license   http://opensource.org/licenses/OSL-3.0
@@ -46,7 +46,7 @@ class Epayment extends PaymentModule
 
         $this->name = 'epayment';
         $this->tab = 'payments_gateways';
-        $this->version = '3.1.0';
+        $this->version = '3.2.0';
         $this->author = 'Verifone e-commerce';
         $this->bootstrap = true;
 
@@ -246,7 +246,14 @@ class Epayment extends PaymentModule
      */
     public function hookPayment($params)
     {
-        global $smarty, $cart, $cookie;
+        global $smarty, $cart;
+
+        if (empty($cart)) {
+            $cart = $this->context->cart;
+        }
+        if (empty($smarty)) {
+            $smarty = $this->context->smarty;
+        }
 
         // Load methods
         $methods = $this->getHelper()->getActivePaymentMethods($cart);
@@ -333,11 +340,16 @@ class Epayment extends PaymentModule
      */
     public function hookDisplayPaymentEU($params)
     {
+        global $cart;
+
         if (!$this->active) {
             return;
         }
 
-        global $cart;
+        if (empty($cart)) {
+            $cart = $this->context->cart;
+        }
+
         $paymentOptions = array();
 
         // Load methods
@@ -421,8 +433,6 @@ class Epayment extends PaymentModule
         if (!$this->active) {
             return;
         }
-
-        global $cart;
         $paymentOptions = array();
 
         $error = Tools::getValue('payboxReason');
@@ -443,7 +453,7 @@ class Epayment extends PaymentModule
         }
 
         // Load methods
-        $methods = $this->getHelper()->getActivePaymentMethods($cart);
+        $methods = $this->getHelper()->getActivePaymentMethods($params['cart']);
         // [3.0.9] Remove filtering
         // $debitTypeForCard = $this->getConfig()->getDebitTypeForCard();
         $recurringCards = array();
@@ -541,8 +551,6 @@ class Epayment extends PaymentModule
 
     public function hookPaymentReturn($params)
     {
-        global $smarty;
-
         // Payment method must be enabled
         if (!$this->active) {
             return;
@@ -893,7 +901,7 @@ class Epayment extends PaymentModule
         $this->logDebug(sprintf('Cart %d: Validating order', $cart->id));
         try {
             $paymentName = $this->getHelper()->getDisplayName($this->displayName, $params['cardType']);
-            $result = parent::validateOrder($cart->id, $state, $amount, $paymentName, $message, array('transaction_id' => $params['transaction']), null, $cart->id_currency, $cart->secure_key);
+            $result = parent::validateOrder($cart->id, $state, $amount, $paymentName, $message, array('{transaction_id}' => $params['transaction']), null, $cart->id_currency, $cart->secure_key);
         } catch (Exception $e) {
             $this->logFatal(sprintf('Cart %d: Error validating PrestaShop order: %s', $cart->id, $e->getMessage()));
         }
@@ -967,7 +975,7 @@ class Epayment extends PaymentModule
             $this->logDebug(sprintf('Cart %d: Validating order', $cart->id));
             try {
                 $paymentName = $this->getHelper()->getDisplayName($this->displayName, $params['cardType']);
-                $result = parent::validateOrder($cart->id, $state, $orderAmount, $paymentName, $message, array('transaction_id' => $params['transaction']), null, false, $cart->secure_key);
+                $result = parent::validateOrder($cart->id, $state, $orderAmount, $paymentName, $message, array('{transaction_id}' => $params['transaction']), null, false, $cart->secure_key);
             } catch (Exception $e) {
                 $this->logFatal(sprintf('Cart %d: Error validating PrestaShop order: %s', $cart->id, $e->getMessage()));
             }
@@ -1117,7 +1125,7 @@ class Epayment extends PaymentModule
             $this->logDebug(sprintf('Cart %d: Validating order', $cart->id));
             try {
                 $paymentName = $this->getHelper()->getDisplayName($this->displayName, $params['cardType'], '3');
-                $result = parent::validateOrder($cart->id, $state, $orderAmount, $paymentName, $message, $params, null, false, $cart->secure_key);
+                $result = parent::validateOrder($cart->id, $state, $orderAmount, $paymentName, $message, array('{transaction_id}' => $params['transaction']), null, false, $cart->secure_key);
             } catch (Exception $e) {
                 $this->logFatal(sprintf('Cart %d: Error validating PrestaShop order: %s', $cart->id, $e->getMessage()));
             }

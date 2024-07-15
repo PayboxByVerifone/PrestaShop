@@ -1,4 +1,5 @@
-{*
+<?php
+/**
 * Verifone e-commerce PrestaShop Module
 *
 * Feel free to contact Verifone e-commerce at support@paybox.com for any
@@ -12,14 +13,19 @@
 * support@paybox.com so we can mail you a copy immediately.
 *
 *  @category  Module / payments_gateways
-*  @version   3.0.1
+*  @version   1.0.0
 *  @author    BM Services <contact@bm-services.com>
 *  @copyright 2012-2017 Verifone e-commerce
 *  @license   http://opensource.org/licenses/OSL-3.0
 *  @link      http://www.paybox.com/
-*}
+*/
 
-<p>Your order on <strong class="bold">{$shop_name}</strong> is complete.</p>
-<p>You have chosen the <img src="{$module_path}img/epayment-xs.png" /> method.</p>
-<p>Your order will be sent very soon.</p>
-<p>For any question or for further information, please contact our <a href="{$contact_url}">customer support</a>.</p>
+header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+header('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT');
+
+header('Cache-Control: no-store, no-cache, must-revalidate');
+header('Cache-Control: post-check=0, pre-check=0', false);
+header('Pragma: no-cache');
+
+header('Location: ../');
+exit;

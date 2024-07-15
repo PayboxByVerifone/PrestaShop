@@ -459,7 +459,7 @@ class PayboxHelper extends PayboxAbstract
                 'ip' => $params['ip'],
                 'secure' => isset($params['3dsWarranty']) ? $params['3dsWarranty'] : 'N',
                 '3ds_version' => isset($params['3dsVersion']) ? str_replace('3DSv', '', trim($params['3dsVersion'])) : '1.0.0',
-                'date' => $params['date']
+                'date' => isset($params['date']) ? $params['date'] : 'N/A',
             );
 
             $db = new PayboxDb();
@@ -1035,6 +1035,7 @@ class PayboxHelper extends PayboxAbstract
     {
         $name = $customer->firstname.' '.$customer->lastname;
         $name = Tools::replaceAccentedChars($name);
+        $name = str_replace(' - ', '-', $name);
         $name = trim(preg_replace('/[^-. a-zA-Z0-9]/', '', $name));
         return $name;
     }
@@ -1056,6 +1057,11 @@ class PayboxHelper extends PayboxAbstract
         N : Numerical only
         A : Alphabetic only
         */
+
+        // Handle possible null values
+        if (!is_string($value)) {
+            $value = '';
+        }
 
         switch ($type) {
             default:
@@ -1132,10 +1138,27 @@ class PayboxHelper extends PayboxAbstract
         $zipCode = $this->formatTextValue($billingAddress->postcode, 'ANS', 10);
         $city = $this->formatTextValue($billingAddress->city, 'ANS', 50);
         $isoCode = Country::getIsoById($billingAddress->id_country);
+
         $countryCode = (int)PayboxIso3166Country::getNumericCode($isoCode);
+        $countryCodeFormat = '%03d';
+        if (empty($countryCode)) {
+            // Send empty string to CountryCode instead of 000
+            $countryCodeFormat = '%s';
+            $countryCode = '';
+        }
+
+        $mobilePhoneIntCode = PayboxIso3166Country::getPhoneCode($isoCode);
+        $mobilePhoneNumber = $this->formatTextValue((!empty($billingAddress->phone_mobile) ? $billingAddress->phone_mobile : (!empty($billingAddress->phone) ? $billingAddress->phone : '')), 'N', 10);
+        $mobilePhoneNumberFormat = '%d';
+        if (empty($mobilePhoneIntCode) || empty($mobilePhoneNumber)) {
+            // Send empty string to MobilePhone instead of 0
+            $mobilePhoneNumberFormat = '%s';
+            $mobilePhoneNumber = '';
+        }
+        $mobilePhone = sprintf('<CountryCodeMobilePhone>%s</CountryCodeMobilePhone><MobilePhone>' . $mobilePhoneNumberFormat . '</MobilePhone>', $mobilePhoneIntCode, $mobilePhoneNumber);
 
         $xml = sprintf(
-            '<?xml version="1.0" encoding="utf-8"?><Billing><Address><FirstName>%s</FirstName><LastName>%s</LastName><Address1>%s</Address1><Address2>%s</Address2><ZipCode>%s</ZipCode><City>%s</City><CountryCode>%03d</CountryCode></Address></Billing>',
+            '<?xml version="1.0" encoding="utf-8"?><Billing><Address><FirstName>%s</FirstName><LastName>%s</LastName><Address1>%s</Address1><Address2>%s</Address2><ZipCode>%s</ZipCode><City>%s</City><CountryCode>' . $countryCodeFormat . '</CountryCode>' . $mobilePhone . '</Address></Billing>',
             $firstName,
             $lastName,
             $addressLine1,
@@ -2097,6 +2120,9 @@ class PayboxHelper extends PayboxAbstract
                     */
                     $orderInvoice = null;
 
+                    // Negative order payment aren't allowed since PS 1.7.7+
+                    $shouldCreateNegativeTransaction = (version_compare(_PS_VERSION_, '1.7.7.0', '>=') && $operationAmount >= 0) || version_compare(_PS_VERSION_, '1.7.7.0', '<');
+
                     $orderPaymentFound = false;
                     foreach ($orderPayments as $orderPayment) {
                         if ($orderPayment->transaction_id == $details['id_transaction']) {
@@ -2107,7 +2133,7 @@ class PayboxHelper extends PayboxAbstract
                             }
 
                             $this->logDebug(sprintf('Cart %d: Order %d / %s%f %s %s', $order->id_cart, $order->id, 'Create OrderPayment of ', $operationAmount, 'for existing transaction', $transactionId));
-                            if (!$order->addOrderPayment($operationAmount, $orderPayment->payment_method, $transactionId, $currency, null, $orderInvoice)) {
+                            if ($shouldCreateNegativeTransaction && !$order->addOrderPayment($operationAmount, $orderPayment->payment_method, $transactionId, $currency, null, $orderInvoice)) {
                                 $errors[] = 'Problem creating new payment';
 
                                 // Rollback
@@ -2135,7 +2161,7 @@ class PayboxHelper extends PayboxAbstract
                         }
 
                         $this->logDebug(sprintf('Cart %d: Order %d / %s%f %s %s', $order->id_cart, $order->id, 'Create OrderPayment of ', $operationAmount, 'for new transaction', $transactionId));
-                        if (!$order->addOrderPayment($operationAmount, $orderPayment->payment_method, $transactionId, $currency, null, $orderInvoice)) {
+                        if ($shouldCreateNegativeTransaction && !$order->addOrderPayment($operationAmount, $orderPayment->payment_method, $transactionId, $currency, null, $orderInvoice)) {
                             $errors[] = 'Problem creating new payment';
 
                             // Rollback

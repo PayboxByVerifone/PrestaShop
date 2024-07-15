@@ -183,7 +183,7 @@ class PayboxConfig
 
     public function getAllowedIps()
     {
-        return array('194.2.122.158','195.25.7.166','195.101.99.76','194.2.122.190', '195.25.67.22');
+        return array('194.2.122.190', '195.25.67.22');
     }
 
     public function getAutoCaptureState()

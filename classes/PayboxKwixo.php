@@ -69,8 +69,6 @@ class PayboxKwixo
 
     public function buildKwixoParams(Cart $cart, array $additionalParams = array())
     {
-        global $cookie;
-
         // Customer
         $customer = new Customer($cart->id_customer);
 

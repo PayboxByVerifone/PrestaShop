@@ -39,6 +39,12 @@ class EpaymentValidationModuleFrontController extends ModuleFrontController
      */
     public function initContent()
     {
+        $this->context->smarty->assign([
+            'shop_name' => $this->context->shop->name,
+            'module_path' => $this->module->getPathUri(),
+            'contact_url' => $this->context->link->getPageLink('contact', true),
+        ]);
+
         if (_PS_VERSION_ >= '1.7') {
             $this->setTemplate('module:epayment/views/templates/front/validation.tpl');
         } else {

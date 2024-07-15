@@ -40,7 +40,7 @@ class PayboxAdminOrder extends PayboxAbstractAdmin
     private function _writeCommonDetails(PayboxHtmlWriter $w, array $details)
     {
         $label = $this->l('Payment details');
-        $w->blockStart('paybox_details', $label, $this->getImagePath().'epayment-xs.png');
+        $w->blockStart('paybox_details', $label, $this->getImagePath().'epayment-xs.png', (version_compare(_PS_VERSION_, '8.0.0', '>=') ? 'card card-body' : ''));
 
         $w->helpWidget($this->l('Help'), $this->l('See the documentation for help'), Configuration::get('PAYBOX_DOC_URL'));
 
@@ -112,7 +112,7 @@ class PayboxAdminOrder extends PayboxAbstractAdmin
         }
 
         // Processing date
-        $text = $w->escape(preg_replace('/^([0-9]{2})([0-9]{2})([0-9]{4})$/', '$1/$2/$3', $details['date']));
+        $text = $w->escape((isset($details['date']) ? preg_replace('/^([0-9]{2})([0-9]{2})([0-9]{4})$/', '$1/$2/$3', $details['date']) : 'N/A'));
         $w->html(sprintf(
             $tpl,
             $this->l('Processing date:'),
@@ -151,7 +151,7 @@ class PayboxAdminOrder extends PayboxAbstractAdmin
                 $details['id_order']
             ));
             $w->html('<input type="hidden" name="order_action" value="capture_all" />');
-            $w->button($this->l('Capture total transaction'), 'submit');
+            $w->button($this->l('Capture total transaction'), 'submit', 'btn-primary');
             $w->html('</form>');
             $w->html('</p>');
         }
@@ -174,8 +174,8 @@ class PayboxAdminOrder extends PayboxAbstractAdmin
             $details['id_order']
         ));
         $w->html('<input type="hidden" name="order_action" value="capture_amount" />');
-        $w->html('<input type="text" name="amountCapture" value="" /> ');
-        $w->button($this->l('Capture this amount'), 'submit');
+        $w->html('<input type="text" name="amountCapture" class="form-control" value="" /> ');
+        $w->button($this->l('Capture this amount'), 'submit', 'btn-primary');
         $w->html('</form>');
         $w->html('</p>');
         /*
@@ -345,7 +345,7 @@ EOF;
                 $details['id_order']
             ));
             $w->html('<input type="hidden" name="order_action" value="refund_first" />');
-            $w->button($this->l('Refund the first payment'), 'submit');
+            $w->button($this->l('Refund the first payment'), 'submit', 'btn-primary');
             $w->html('</form>');
             $w->html('</p>');
         }
@@ -362,7 +362,7 @@ EOF;
                 $details['id_order']
             ));
             $w->html('<input type="hidden" name="order_action" value="cancel_recurring" />');
-            $w->button($this->l('Cancel the next recurring payment'), 'submit');
+            $w->button($this->l('Cancel the next recurring payment'), 'submit', 'btn-danger');
             $w->html('</form>');
             $w->html('</p>');
         }
@@ -423,7 +423,7 @@ EOF;
                     $details['id_order']
                 ));
                 $w->html('<input type="hidden" name="order_action" value="refund_all" />');
-                $w->button($this->l('Refund total transaction'), 'submit');
+                $w->button($this->l('Refund total transaction'), 'submit', 'btn-primary');
                 $w->html('</form>');
                 $w->html('</p>');
 
@@ -458,8 +458,8 @@ EOF;
                     $details['id_order']
                 ));
                 $w->html('<input type="hidden" name="order_action" value="refund_amount" />');
-                $w->html('<input type="text" name="amountRefund" value="" /> ');
-                $w->button($this->l('Refund this amount'), 'submit');
+                $w->html('<input type="text" name="amountRefund" class="form-control" value="" /> ');
+                $w->button($this->l('Refund this amount'), 'submit', 'btn-primary');
                 $w->html('</form>');
                 $w->html('</p>');
 
@@ -557,7 +557,7 @@ EOF;
                     // Add amount as hidden field
                     $w->html(sprintf('<input type="hidden" name="amountRefund" value="%s" />', $possibleRefund));
                     $w->html(sprintf('<input type="hidden" name="transaction_id" value="%s" />', $refundableTransactionId));
-                    $w->button($this->l('Refund total transaction'), 'submit');
+                    $w->button($this->l('Refund total transaction'), 'submit', 'btn-primary');
                     $w->html('</form>');
                     $w->html('</p>');
 
@@ -594,8 +594,8 @@ EOF;
                     ));
                     $w->html('<input type="hidden" name="order_action" value="refund_amount" />');
                     $w->html(sprintf('<input type="hidden" name="transaction_id" value="%s" />', $refundableTransactionId));
-                    $w->html('<input type="text" name="amountRefund" value="" /> ');
-                    $w->button($this->l('Refund this amount'), 'submit');
+                    $w->html('<input type="text" name="amountRefund" class="form-control" value="" /> ');
+                    $w->button($this->l('Refund this amount'), 'submit', 'btn-primary');
                     $w->html('</form>');
                     $w->html('</p>');
 

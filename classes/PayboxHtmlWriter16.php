@@ -65,19 +65,20 @@ class PayboxHtmlWriter extends PayboxHtmlWriterAbstract
         $this->html('</div>');
     }
 
-    public function blockStart($id, $label, $image = null)
+    public function blockStart($id, $label, $image = null, $classes = '')
     {
-        $tpl = '<div class="bootstrap panel pbx_panel" id="%s"><h3>%s</h3>';
+        $tpl = '<div class="bootstrap panel pbx_panel %s" id="%s"><h3>%s</h3>';
         if (!empty($image)) {
             $label = sprintf('<img src="%s" alt="%s"/> %s', $this->escape($image), $label, $label);
         }
-        $this->html(sprintf($tpl, $id, $label));
+        $this->html(sprintf($tpl, $classes, $id, $label));
     }
 
-    public function button($label, $type = 'submit')
+    public function button($label, $type = 'submit', $classes = 'btn-default')
     {
         $this->html(sprintf(
-            '<button class="btn btn-default" type="%s">%s</button>',
+            '<button class="btn %s" type="%s">%s</button>',
+            $classes,
             $type,
             $label
         ));
@@ -113,12 +114,12 @@ class PayboxHtmlWriter extends PayboxHtmlWriterAbstract
 
     public function formButton($name, $label)
     {
-        $this->html('<div class="row"><div class="col-lg-5 col-lg-offset-3">');
+        $this->html('<div class="row"><div class="col-lg-12 text-center">');
         if (empty($name)) {
-            $tpl = '<button class="btn btn-default" type="submit">%s</button>';
+            $tpl = '<button class="btn btn-primary" type="submit">%s</button>';
             $this->html(sprintf($tpl, $label));
         } else {
-            $tpl = '<input class="button" class="btn btn-default" type="submit" name="%s" value="%s" />';
+            $tpl = '<input class="button" class="btn btn-primary" type="submit" name="%s" value="%s" />';
             $this->html(sprintf($tpl, $this->escape($name), $label));
         }
         $this->html('</div></div>');

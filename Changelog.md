@@ -1,4 +1,9 @@
 # Change Log
+## [3.2.0] 2024-07-11
+### Modifications
+- Add PrestaShop 8.0 compatibility
+- Add phone number into PBX_BILLING
+
 ## [3.1.0] 2023-02-08
 ### Modifications
 - Update 3DSv2 fields
