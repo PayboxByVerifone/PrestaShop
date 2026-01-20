@@ -70,7 +70,6 @@ $_MODULE['<{epayment}prestashop>payboxadminorder_172c9a1ce835fa1c5c436c2ea8bdc3e
 $_MODULE['<{epayment}prestashop>payboxadminorder_f94f77617fb8ec929d75d05aedb9d6fd'] = 'Rembourser un produit';
 $_MODULE['<{epayment}prestashop>payboxadminorder_729a51874fe901b092899e9e8b31c97a'] = 'Etes-vous sûr(e) ?';
 $_MODULE['<{epayment}prestashop>payboxadminorder_44cdd2788ef82e668dd74f24d332d026'] = 'Générer un remboursement Verifone e-commerce';
-$_MODULE['<{epayment}prestashop>payboxadminorder_9c9db876a4778dede8de36f90ffe9c37'] = 'La transaction Kwixo doit être gérée depuis le Back-Office Verifone e-commerce.';
 $_MODULE['<{epayment}prestashop>payboxadminorder_f5f4d2b53842af29c05e97e4a45b02d4'] = 'Rembourser la première échéance';
 $_MODULE['<{epayment}prestashop>payboxadminorder_05e3d85f49a416771060fdefd4e04101'] = 'Annuler les prochaines échéances';
 $_MODULE['<{epayment}prestashop>payboxadminorder_225b46134ae90abfc7be431b67ca464b'] = 'La commande peut être remboursée en plusieurs fois.';
@@ -147,8 +146,6 @@ $_MODULE['<{epayment}prestashop>payboxadminconfig_036e6f9b56a5c19c9c6cb35e5c5b11
 $_MODULE['<{epayment}prestashop>payboxadminconfig_d87a9c7e6cf42e3929bb7a90605249c6'] = 'moyen de paiement mixte';
 $_MODULE['<{epayment}prestashop>payboxadminconfig_f2a6c498fb90ee345d997f888fce3b18'] = 'Supprimer';
 $_MODULE['<{epayment}prestashop>payboxadminconfig_21f671ea203c9b6eb1fcdee188105e38'] = 'Voulez-vous supprimer cette carte ?';
-$_MODULE['<{epayment}prestashop>payboxadminconfig_abbef19851e1dc4495a522b6e575b338'] = 'Etat de la commande après un paiement Kwixo';
-$_MODULE['<{epayment}prestashop>payboxadminconfig_08ac22ed618bea5447cb4638e6938cac'] = 'Configuration Kwixo';
 $_MODULE['<{epayment}prestashop>payboxadminconfig_93390930550e0b8fa85206312ba938ce'] = 'Choisir un type...';
 $_MODULE['<{epayment}prestashop>payboxadminconfig_b16c6b201b9dea0dba4c5214e584d5a9'] = 'Détails des catégories';
 $_MODULE['<{epayment}prestashop>payboxadminconfig_52a114462b78de8a2ddca5ab922721d3'] = 'Veuillez choisir le type de chaque catégorie de votre boutique.';

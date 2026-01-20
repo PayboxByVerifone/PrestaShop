@@ -294,17 +294,6 @@ EOF;
         $w->blockEnd();
     }
 
-    private function _writeKwixoDetails(PayboxHtmlWriter $w, array $details)
-    {
-        $this->_writeCommonDetails($w, $details);
-
-        // Information message
-        $text = $this->l('please manage your Kwixo transaction in PaymentPlatform interface');
-        $w->alertWarn($text);
-
-        $this->_writeEndDetails($w, $details);
-    }
-
     private function _writeRefundableDetails(PayboxHtmlWriter $w, array $details)
     {
         $this->_writeCommonDetails($w, $details);
@@ -660,10 +649,7 @@ EOF;
             $details['payment_by'] = 'mixed';
         }
 
-        // For Kwixo payment
-        if (in_array($details['carte'], array('STANDARD', '1XRNP', 'CREDIT'))) {
-            $this->_writeKwixoDetails($w, $details);
-        } elseif ($this->getHelper()->canRefund($orderId) && 'PREPAYEE' != $details['method']) {
+        if ($this->getHelper()->canRefund($orderId) && 'PREPAYEE' != $details['method']) {
             // Can be refunded?
             $this->_writeRefundableDetails($w, $details);
         } elseif ($this->getHelper()->canCapture($orderId)) {

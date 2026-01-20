@@ -1,4 +1,13 @@
 # Change Log
+## [3.2.2] 2026-01-20
+### Changes
+- Update public key
+
+## [3.2.1] 2025-06-10
+### Modifications
+- Force default value of CountryCodeMobilePhone
+- Update phone international code database
+
 ## [3.2.0] 2024-07-11
 ### Modifications
 - Add PrestaShop 8.0 compatibility

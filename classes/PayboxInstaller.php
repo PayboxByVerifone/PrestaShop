@@ -301,34 +301,7 @@ class PayboxInstaller
             }
             Configuration::updateValue('PAYBOX_WEB_CASH_VALIDATION', (int)$orderState->id);
         }
-        /*
-        if (!$this->_isValidState(Configuration::get('PAYBOX_KWIXO'))) {
-            $orderState = new OrderState();
-            $orderState->name = array();
-            foreach (Language::getLanguages() as $language) {
-                if (strtolower($language['iso_code']) == 'fr') {
-                    $orderState->name[$language['id_lang']] = 'Payé via Kwixo';
-                    $orderState->template[$language['id_lang']] = 'payment';
-                } else {
-                    $orderState->name[$language['id_lang']] = 'Paid with Kwixo';
-                    $orderState->template[$language['id_lang']] = 'payment';
-                }
-            }
-            $orderState->send_email = true;
-            $orderState->color = '#e4ffb6';
-            $orderState->hidden = false;
-            $orderState->delivery = false;
-            $orderState->logable = true;
-            $orderState->invoice = true;
-            if (version_compare(_PS_VERSION_, '1.5', '>=')) {
-                $orderState->paid = true;
-            }
-            if ($orderState->add()) {
-                $this->_copyOrderStateImage($orderState->id);
-            }
-            Configuration::updateValue('PAYBOX_KWIXO', (int)$orderState->id);
-        }
-        */
+
         return true;
     }
 
@@ -657,41 +630,6 @@ class PayboxInstaller
                 'mixte' => 1,
                 '3ds' => 0,
             ),
-/*
-            array(
-                'type_payment' => 'KWIXO',
-                'type_card' => 'STANDARD',
-                'label' => 'Kwixo standard',
-                'active' => 0,
-                'debit_expedition' => 0,
-                'debit_immediat' => 1,
-                'debit_differe' => 0,
-                'remboursement' => 0,
-                '3ds' => 0,
-            ),
-            array(
-                'type_payment' => 'KWIXO',
-                'type_card' => '1XRNP',
-                'label' => 'Kwixo à réception',
-                'active' => 0,
-                'debit_expedition' => 0,
-                'debit_immediat' => 1,
-                'debit_differe' => 0,
-                'remboursement' => 0,
-                '3ds' => 0,
-            ),
-            array(
-                'type_payment' => 'KWIXO',
-                'type_card' => 'CREDIT',
-                'label' => 'Kwixo credit',
-                'active' => 0,
-                'debit_expedition' => 0,
-                'debit_immediat' => 1,
-                'debit_differe' => 0,
-                'remboursement' => 0,
-                '3ds' => 0,
-            ),
-*/
         );
 
         foreach ($cards as $card) {
@@ -746,13 +684,6 @@ class PayboxInstaller
         // }
 
         // $idOrderState = Configuration::get('PAYBOX_STATE_MIN_CAPTURE');
-        // if($idOrderState != '') {
-        //     Db::getInstance()->execute('DELETE FROM `'._DB_PREFIX_.'order_state` WHERE id_order_state='.$idOrderState);
-        //     Db::getInstance()->execute('DELETE FROM `'._DB_PREFIX_.'order_state_lang` WHERE id_order_state='.$idOrderState);
-        //     @unlink(_PS_IMG_DIR_.'os/'.$idOrderState.'.gif');
-        // }
-
-        // $idOrderState = Configuration::get('PAYBOX_KWIXO');
         // if($idOrderState != '') {
         //     Db::getInstance()->execute('DELETE FROM `'._DB_PREFIX_.'order_state` WHERE id_order_state='.$idOrderState);
         //     Db::getInstance()->execute('DELETE FROM `'._DB_PREFIX_.'order_state_lang` WHERE id_order_state='.$idOrderState);

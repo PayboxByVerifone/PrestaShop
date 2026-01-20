@@ -43,7 +43,6 @@ $classes = array(
     'PayboxEncrypt',
     'PayboxHelper',
     'PayboxInstaller',
-    'PayboxKwixo',
     'PayboxDb',
     'PayboxIso3166Country',
 );

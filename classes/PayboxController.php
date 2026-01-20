@@ -299,15 +299,7 @@ class PayboxController extends PayboxAbstract
         $values = $this->getHelper()->buildSystemParams($cart, $method, $type);
 
         // Find good URLs
-        if ($values['PBX_TYPEPAIEMENT'] == 'KWIXO') {
-            $urls = $this->getConfig()->getKwixoUrls();
-        } elseif ($values['PBX_TYPECARTE'] == 'ANCV') {
-            $urls = $this->getConfig()->getPHPUrls();
-        } elseif ($this->getHelper()->isMobile()) {
-            $urls = $this->getConfig()->getMobileUrls();
-        } else {
-            $urls = $this->getConfig()->getSystemUrls();
-        }
+        $urls = $this->getConfig()->getPHPUrls();
 
         // Build form
         $url = $this->getHelper()->checkUrls($urls);

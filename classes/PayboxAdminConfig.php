@@ -480,120 +480,6 @@ EOF;
         $w->js($js);
     }
 
-    private function _writeKwixoBlock(PayboxHtmlWriter $w)
-    {
-        $kwixo = new PayboxKwixo($this->getModule()->getConfig());
-
-        /*$w->formSelect(
-            'PAYBOX_KWIXO',
-            $this->l('State after Kwixo payment'),
-            $options,
-            Configuration::get('PAYBOX_KWYXO')
-        );*/
-
-        $id_lang = Configuration::get('PS_LANG_DEFAULT');
-
-        $label = $this->l('Kwixo configuration');
-        $w->blockStart('paybox_kwixo_block', $label, $this->getImagePath().'money.png');
-
-        $this->_writeLinks(
-            array(
-                'paybox_config_block' => $this->l('Configuration'),
-                'paybox_settings_block' => $this->l('Parameters'),
-                'paybox_methods_block' => $this->l('Contracts'),
-            ),
-            $w
-        );
-
-        //
-        // Categories
-        //
-
-        // Build select options
-        $options = array('0' => $this->l('Choose a type...'));
-        foreach ($kwixo->getCategories() as $name => $label) {
-            $options[$name] = $this->l($label);
-        }
-
-        // Start of UI
-        $w->formElementStart('PAYBOX_CAT_TYPE', $this->l('Category Detail'));
-        $label = $this->l('Please select a type for each category of your shop');
-        $w->formDescription($label);
-        $w->html('<table cellspacing="0" cellpadding="0" class="table">');
-        $w->html(sprintf(
-            '<thead><tr><th>%s</th><th>%s</th></tr></thead><tbody>',
-            $this->l('Category'),
-            $this->l('Category type')
-        ));
-
-        // Default cateogry
-        $w->html(sprintf('<tr><td>%s</td><td>', $this->l('Choose default type...')));
-        $w->select('category_id', $options, Configuration::get('PAYBOX_DEFAULTCATEGORYID'));
-        $w->html('</td>');
-
-        // Categories
-        $categories = Category::getSimpleCategories($id_lang);
-        foreach ($categories as $category) {
-            $w->html(sprintf('<tr><td>%s</td><td>', $w->escape($category['name'])));
-            $w->select('cat_'.$category['id_category'], $options, Configuration::get('PAYBOX_CAT_TYPE_'.$category['id_category']));
-            $w->html('</td>');
-        }
-
-        // End of UI
-        $w->html('</tbody></table>');
-        $w->formElementEnd();
-
-        //
-        // Carriers
-        //
-
-        // Build select options
-        $carrierTypes = array('0' => $this->l('Choose a carrier type...'));
-        foreach ($kwixo->getCarrierType() as $name => $label) {
-            $carrierTypes[$name] = $this->l($label);
-        }
-        $carrierSpeeds = array(
-            '1' => $this->l('Standard shipping'),
-            '2' => $this->l('Express shipping'),
-        );
-
-        // Start of UI
-        $w->formElementStart('PAYBOX_CARRIER_TYPE', $this->l('Carrier Detail'));
-        $label = $this->l('Please select a carrier type for each carrier use on your shop');
-        $w->formDescription($label);
-        $w->html('<table cellspacing="0" cellpadding="0" class="table">');
-        $w->html(sprintf(
-            '<thead><tr><th>%s</th><th>%s</th><th>%s</th><th>%s</th></tr></thead><tbody>',
-            $this->l('Carrier'),
-            $this->l('Carrier Type'),
-            $this->l('Speed'),
-            $this->l('Days')
-        ));
-
-        // Carriers
-        $carriers = Carrier::getCarriers($id_lang, false, false, false, null, false);
-        foreach ($carriers as $carrier) {
-            $carrierType = Configuration::get('PAYBOX_CARRIER_TYPE_'.$carrier['id_carrier']);
-            $carrierSpeed = Configuration::get('PAYBOX_CARRIER_SPEED_'.$carrier['id_carrier']);
-            $carrierDays = Configuration::get('PAYBOX_CARRIER_DAYS_'.$carrier['id_carrier']);
-
-            $w->html(sprintf('<tr><td>%s</td><td>', $w->escape($carrier['name'])));
-            $w->select('carrier['.$carrier['id_carrier'].'][type]', $carrierTypes, $carrierType);
-            $w->html('</td><td>');
-            $w->select('carrier['.$carrier['id_carrier'].'][speed]', $carrierSpeeds, $carrierSpeed);
-            $w->html('</td><td>');
-            $w->text('carrier['.$carrier['id_carrier'].'][days]', $carrierDays);
-            $w->html('</td>');
-        }
-
-        // End of UI
-        $w->html('</tbody></table>');
-        $w->formElementEnd();
-
-        $w->formButton(null, $this->l('Save settings'));
-        $w->blockEnd();
-    }
-
     private function _writeAddMethodPanel(PayboxHtmlWriter $w)
     {
         $label = $this->l('Add new payment method');
@@ -917,7 +803,6 @@ EOF;
         $this->_writeSettingsBlock($w);
         $this->_writeConfigurationBlock($w);
         $this->_writeMethodsBlock($w);
-        // $this->_writeKwixoBlock($w);
         $w->formEnd();
 
         $tpl = '<form id="paybox_delete_card" action="%s" method="post" enctype="multipart/form-data">';
@@ -1061,21 +946,7 @@ EOF;
                 Db::getInstance()->execute($sql);
             }
         }
-        /*
-        // Kwixo
-        Configuration::updateValue('PAYBOX_DEFAULTCATEGORYID', intval($_POST['category_id']));
-        Configuration::updateValue('PAYBOX_NBDELIVERYDAYS', intval(Tools::getValue('PAYBOX_NBDELIVERYDAYS')));
-        Configuration::updateValue('PAYBOX_RNP', intval(Tools::getValue('PAYBOX_RNP')));
-        $carriers = Carrier::getCarriers(Configuration::get('PS_LANG_DEFAULT'), false, false, false, NULL, false);
-        foreach ($carriers as $carrier) {
-            if (isset($_POST['carrier'][$carrier['id_carrier']])) {
-                $values = $_POST['carrier'][$carrier['id_carrier']];
-                Configuration::updateValue('PAYBOX_CARRIER_TYPE_'.$carrier['id_carrier'], stripslashes($values['type']));
-                Configuration::updateValue('PAYBOX_CARRIER_SPEED_'.$carrier['id_carrier'], stripslashes($values['speed']));
-                Configuration::updateValue('PAYBOX_CARRIER_DAYS_'.$carrier['id_carrier'], stripslashes($values['days']));
-            }
-        }
-        */
+
         $categories = Category::getSimpleCategories(Configuration::get('PS_LANG_DEFAULT'));
         foreach ($categories as $categorie) {
             if (isset($_POST['cat_'.$categorie['id_category']])) {

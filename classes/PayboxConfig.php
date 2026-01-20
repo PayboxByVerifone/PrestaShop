@@ -78,40 +78,13 @@ class PayboxConfig
     );
 
     private $_urls = array(
-        'system' => array(
-            'test' => array(
-                'https://preprod-tpeweb.paybox.com/cgi/MYchoix_pagepaiement.cgi'
-            ),
-            'production' => array(
-                'https://tpeweb.paybox.com/cgi/MYchoix_pagepaiement.cgi',
-                'https://tpeweb1.paybox.com/cgi/MYchoix_pagepaiement.cgi',
-            ),
-        ),
-        'kwixo' => array(
-            'test' => array(
-                'https://preprod-tpeweb.paybox.com/php/'
-            ),
-            'production' => array(
-                'https://tpeweb.paybox.com/php/',
-                'https://tpeweb1.paybox.com/php/',
-            ),
-        ),
         'php' => array(
             'test' => array(
                 'https://preprod-tpeweb.paybox.com/php/'
             ),
             'production' => array(
-                'https://tpeweb.paybox.com/php/',
                 'https://tpeweb1.paybox.com/php/',
-            ),
-        ),
-        'mobile' => array(
-            'test' => array(
-                'https://preprod-tpeweb.paybox.com/cgi/MYframepagepaiement_ip.cgi'
-            ),
-            'production' => array(
-                'https://tpeweb.paybox.com/cgi/MYframepagepaiement_ip.cgi',
-                'https://tpeweb1.paybox.com/cgi/MYframepagepaiement_ip.cgi',
+                'https://tpeweb.paybox.com/php/',
             ),
         ),
         'direct' => array(
@@ -231,11 +204,6 @@ class PayboxConfig
         return $this->_get('PAYBOX_IDENTIFIANT');
     }
 
-    public function getKwixoSuccessState()
-    {
-        return $this->_get('PAYBOX_KWIXO');
-    }
-
     public function getPaypalHoldState()
     {
         return $this->_get('PAYBOX_PAYPAL_HOLD');
@@ -281,24 +249,9 @@ class PayboxConfig
         return $this->_getUrls('direct');
     }
 
-    public function getKwixoUrls()
-    {
-        return $this->_getUrls('kwixo');
-    }
-
     public function getPHPUrls()
     {
         return $this->_getUrls('php');
-    }
-
-    public function getMobileUrls()
-    {
-        return $this->_getUrls('mobile');
-    }
-
-    public function getSystemUrls()
-    {
-        return $this->_getUrls('system');
     }
 
     public function getResAboUrls()

@@ -13,7 +13,7 @@
 * support@paybox.com so we can mail you a copy immediately.
 *
 *  @category  Module / payments_gateways
-*  @version   3.2.0
+*  @version   3.2.2
 *  @author    BM Services <contact@bm-services.com>
 *  @copyright 2012-2017 Verifone e-commerce
 *  @license   http://opensource.org/licenses/OSL-3.0
@@ -46,7 +46,7 @@ class Epayment extends PaymentModule
 
         $this->name = 'epayment';
         $this->tab = 'payments_gateways';
-        $this->version = '3.2.0';
+        $this->version = '3.2.2';
         $this->author = 'Verifone e-commerce';
         $this->bootstrap = true;
 
@@ -877,9 +877,7 @@ class Epayment extends PaymentModule
         $amountScale = pow(10, $this->getHelper()->getCurrencyDecimals($cart));
         $amount = floatval($amount) / $amountScale;
 
-        if ($params['paymentType'] == 'KWIXO') {
-            $state = $this->_config->getKwixoSuccessState();
-        } elseif ($params['paymentType'] == 'PAYPAl' && $params['error'] == '99999') {
+        if ($params['paymentType'] == 'PAYPAl' && $params['error'] == '99999') {
             $state = $this->_config->getPaypalHoldState();
         } else {
             $state = $this->_config->getSuccessState();

@@ -79,8 +79,6 @@ $_MODULE['<{epayment}prestashop>payboxadminconfig_76f0ed934de85cc7131910b32ede77
 $_MODULE['<{epayment}prestashop>payboxadminconfig_036e6f9b56a5c19c9c6cb35e5c5b119f'] = 'Paid immediatly';
 $_MODULE['<{epayment}prestashop>payboxadminconfig_f2a6c498fb90ee345d997f888fce3b18'] = 'Delete';
 $_MODULE['<{epayment}prestashop>payboxadminconfig_21f671ea203c9b6eb1fcdee188105e38'] = 'Are you sure ? do you want delete this card ?';
-$_MODULE['<{epayment}prestashop>payboxadminconfig_abbef19851e1dc4495a522b6e575b338'] = 'Status after Kwixo payment';
-$_MODULE['<{epayment}prestashop>payboxadminconfig_08ac22ed618bea5447cb4638e6938cac'] = 'Kwixo configuration';
 $_MODULE['<{epayment}prestashop>payboxadminconfig_93390930550e0b8fa85206312ba938ce'] = 'Choose a type...';
 $_MODULE['<{epayment}prestashop>payboxadminconfig_b16c6b201b9dea0dba4c5214e584d5a9'] = 'Category Detail';
 $_MODULE['<{epayment}prestashop>payboxadminconfig_52a114462b78de8a2ddca5ab922721d3'] = 'Please select a type for each category of your shop';
@@ -154,7 +152,6 @@ $_MODULE['<{epayment}prestashop>payboxadminorder_4d9b94e5a37c33f49ac31e1994a1efd
 $_MODULE['<{epayment}prestashop>payboxadminorder_172c9a1ce835fa1c5c436c2ea8bdc3ea'] = 'Canceling a product will not capture the transaction.';
 $_MODULE['<{epayment}prestashop>payboxadminorder_f94f77617fb8ec929d75d05aedb9d6fd'] = 'Cancel a product';
 $_MODULE['<{epayment}prestashop>payboxadminorder_729a51874fe901b092899e9e8b31c97a'] = 'Are you sure?';
-$_MODULE['<{epayment}prestashop>payboxadminorder_9c9db876a4778dede8de36f90ffe9c37'] = 'Please manage your Kwixo transaction in your Verifone e-commerce Back-Office';
 $_MODULE['<{epayment}prestashop>payboxadminorder_f5f4d2b53842af29c05e97e4a45b02d4'] = 'Refund the first payment';
 $_MODULE['<{epayment}prestashop>payboxadminorder_05e3d85f49a416771060fdefd4e04101'] = 'Cancel the next recurring payment';
 $_MODULE['<{epayment}prestashop>payboxadminorder_225b46134ae90abfc7be431b67ca464b'] = 'The transaction can only be refunded once';
