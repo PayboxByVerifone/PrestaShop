@@ -1294,6 +1294,42 @@ class PayboxHelper extends PayboxAbstract
         return Db::getInstance()->getValue($sql);
     }
 
+    /**
+     * Check IPN signature using specific key
+     *
+     * @param string $data
+     * @param string $keyFile
+     * @return bool
+     */
+    protected function checkSignature($data, $keyFile = 'pubkey.pem')
+    {
+        // Extract signature
+        $matches = array();
+        if (!preg_match('#^(.*)&K=(.*)$#', $data, $matches)) {
+            $message = 'An unexpected error in Verifone e-commerce call has occured: missing signature.';
+            throw new Exception($this->l($message));
+        }
+
+        // Check sign
+        $signature = base64_decode(urldecode($matches[2]));
+        $pubkey = file_get_contents(dirname(__FILE__) . '/' . basename($keyFile));
+        $res = (boolean) openssl_verify($matches[1], $signature, $pubkey);
+
+        if (!$res) {
+            if (preg_match('#^fc=module&module=epayment&controller=validation&t=[s3]&a=[cfrsij]&(.*)&K=(.*)$#', $data, $matches)) {
+                $signature = base64_decode(urldecode($matches[2]));
+                $res = (boolean) openssl_verify($matches[1], $signature, $pubkey);
+            }
+
+            if (preg_match('#^t=[s3]&a=[cfrsij]&C=IDEAL&P=PREPAYEE&(.*)&K=(.*)$#', $data, $matches)) {
+                $signature = base64_decode(urldecode($matches[2]));
+                $res = (boolean) openssl_verify($matches[1], $signature, $pubkey);
+            }
+        }
+
+        return $res;
+    }
+
     public function getParams($logParams = false, $checkSign = true)
     {
         // Retrieves data
@@ -1313,33 +1349,10 @@ class PayboxHelper extends PayboxAbstract
 
         // Check signature if needed
         if ($checkSign) {
-            // Extract signature
-            $matches = array();
-            if (!preg_match('#^(.*)&K=(.*)$#', $data, $matches)) {
-                $message = 'An unexpected error in Verifone e-commerce call has occured: missing signature.';
+            // Extract & check signature or throw Exception
+            if (!$this->checkSignature($data) && !$this->checkSignature($data, 'pubkey_1024.pem')) {
+                $message = 'An unexpected error in Verifone e-commerce call has occured: invalid signature.';
                 throw new Exception($this->l($message));
-            }
-
-            // Check sign
-            $signature = base64_decode(urldecode($matches[2]));
-            $pubkey = file_get_contents(dirname(__FILE__).'/pubkey.pem');
-            $res = (boolean) openssl_verify($matches[1], $signature, $pubkey);
-
-            if (!$res) {
-                if (preg_match('#^fc=module&module=epayment&controller=validation&t=[s3]&a=[cfrsij]&(.*)&K=(.*)$#', $data, $matches)) {
-                    $signature = base64_decode(urldecode($matches[2]));
-                    $res = (boolean) openssl_verify($matches[1], $signature, $pubkey);
-                }
-
-                if (preg_match('#^t=[s3]&a=[cfrsij]&C=IDEAL&P=PREPAYEE&(.*)&K=(.*)$#', $data, $matches)) {
-                    $signature = base64_decode(urldecode($matches[2]));
-                    $res = (boolean) openssl_verify($matches[1], $signature, $pubkey);
-                }
-
-                if (!$res) {
-                    $message = 'An unexpected error in Verifone e-commerce call has occured: invalid signature.';
-                    throw new Exception($this->l($message));
-                }
             }
         }
 

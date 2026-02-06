@@ -1,4 +1,8 @@
 # Change Log
+## [3.2.3] 2026-02-10
+### Changes
+- Improve backward compatibility regarding signature checks
+
 ## [3.2.2] 2026-01-20
 ### Changes
 - Update public key
